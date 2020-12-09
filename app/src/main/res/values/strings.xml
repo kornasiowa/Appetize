@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">Appetize</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="log">Log In</string>
+    <string name="sign">Sign Up</string>
+    <string name="send">Send</string>
+    <string name="remind_password">
+        Message will be send to email address linked to your account.
+        Click button and check your email for further instructions.
+    </string>
+    <string name="desc1">Google log in button</string>
+    <string name="desc2">Arrow back</string>
+    <string name="title_home">Home</string>
+    <string name="title_new_recipe">New Recipe</string>
+    <string name="title_favorite">Favorites</string>
+    <string name="title_shopping">Shopping List</string>
+    <string name="title_account">Account</string>
+    <string name="save_recipe">Save recipe</string>
+
+    <string name="recipe_name">Recipe name</string>
+    <string name="category">Category</string>
+    <string name="cooking_time">Cooking time</string>
+    <string name="time_mode">Count the total cooking time from steps</string>
+    <string name="calories">Calories</string>
+    <string name="portions">Portions</string>
+    <string name="ingredient">Ingredient</string>
+    <string name="ingredients">Ingredients:</string>
+    <string name="recipe_image">Recipe image</string>
+    <string name="new_ingredient">New ingredient</string>
+    <string name="amount">Amount</string>
+    <string name="new_step">New step</string>
+    <string name="add_step">Add step</string>
+    <string name="step">Step</string>
+    <string name="description">Description</string>
+    <string name="duration">Duration</string>
+    <string name="remove">Remove</string>
+    <string name="min">min</string>
+    <string name="cal">kcal</string>
+    <string name="others">Others</string>
+    <string name="main_courses">Main courses</string>
+    <string name="desserts">Desserts</string>
+    <string name="appetizers">Appetizers</string>
+    <string name="app_open_activity_add_recipe">app_open_activity_add_recipe</string>
+
+    <array name="recipe_category">
+        <item></item>
+        <item>appetizer</item>
+        <item>dessert</item>
+        <item>main course</item>
+        <item>other</item>
+    </array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_recipes_found">No recipes found in this category</string>
+    <string name="general">General</string>
+    <string name="preparation">Preparation</string>
+    <string name="edit_recipe">Edit recipe</string>
+    <string name="delete_recipe">Delete recipe</string>
+    <string name="set_timer">Set timer</string>
+</resources>

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "358352347483",
+    "firebase_url": "https://appetize-6cdf2.firebaseio.com",
+    "project_id": "appetize-6cdf2",
+    "storage_bucket": "appetize-6cdf2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358352347483:android:7bdbcf101c3f0600e37a7e",
+        "android_client_info": {
+          "package_name": "com.kornasdominika.appetize"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "358352347483-t55ociivfhat6qr535sea3mk1fj6i6mt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kornasdominika.appetize",
+            "certificate_hash": "35a94052e527a79b6dae5fba38d7fee3758abc59"
+          }
+        },
+        {
+          "client_id": "358352347483-260sdtqs1lssdrj4emvnt2nicg7oodlg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTuuMtw_4XpUvBD8S26tccM8KCpNBiH5I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "358352347483-260sdtqs1lssdrj4emvnt2nicg7oodlg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
