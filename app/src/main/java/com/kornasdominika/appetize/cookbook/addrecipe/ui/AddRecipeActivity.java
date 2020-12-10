@@ -351,7 +351,7 @@ public class AddRecipeActivity extends AppCompatActivity implements IAddRecipeAc
             EditText stepTime = v.findViewById(R.id.step_time);
 
             int currentStep = Integer.parseInt(String.valueOf(stepTime.getText()));
-            totalTime = +currentStep;
+            totalTime = totalTime + currentStep;
 
             Step newStep = new Step(stepCount, String.valueOf(description.getText()), currentStep);
             listOfSteps.add(newStep);

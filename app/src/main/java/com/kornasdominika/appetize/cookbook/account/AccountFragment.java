@@ -29,6 +29,8 @@ public class AccountFragment extends Fragment {
 
         Button btn = view.findViewById(R.id.sign_out);
 
+        mAuth = FirebaseAuth.getInstance();
+
         btn.setOnClickListener(view1 -> {
             mAuth.signOut();
             startActivity(new Intent(getContext(), LoginActivity.class));

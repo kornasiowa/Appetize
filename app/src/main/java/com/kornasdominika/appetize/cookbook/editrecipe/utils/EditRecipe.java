@@ -73,21 +73,19 @@ public class EditRecipe implements IEditRecipe {
     @Override
     public void editRecipe(long rid, Recipe recipe, Uri uri, boolean isImageDeleted) {
         editRecipeActivity.showProgress();
-        if(isImageDeleted){
-            System.out.println("Tutaj 13");
+        if (isImageDeleted) {
             deleteOldImage(currentImage);
             saveRecipeData(rid, recipe, null);
         } else {
             if (uri == null) {
-                System.out.println("Tutaj 1");
                 saveRecipeData(rid, recipe, currentImage);
             } else {
-                System.out.println("Tutaj w3");
-                deleteOldImage(currentImage);
+                if (currentImage != null) {
+                    deleteOldImage(currentImage);
+                }
                 uploadRecipeImage(rid, recipe, uri);
             }
         }
-
     }
 
     private void saveRecipeData(long rid, Recipe recipe, String imageUrl) {
@@ -99,12 +97,10 @@ public class EditRecipe implements IEditRecipe {
             @Override
             public void onResponse(Call<Recipe> call, Response<Recipe> response) {
                 if (response.isSuccessful()) {
-                    System.out.println("Tutaj 2");
                     editRecipeActivity.dismissProgress();
                     editRecipeActivity.showMessage("Recipe updated successfully.");
                     editRecipeActivity.finishActivity();
                 } else {
-                    System.out.println("Tutaj 3");
                     editRecipeActivity.dismissProgress();
                     editRecipeActivity.showMessage("Error occurs during updating the recipe.");
                     editRecipeActivity.finishActivity();
@@ -132,7 +128,6 @@ public class EditRecipe implements IEditRecipe {
                 downloadUrl.addOnCompleteListener(task -> {
                     if (downloadUrl.isSuccessful()) {
                         String imageUrl = Objects.requireNonNull(downloadUrl.getResult()).toString();
-                        Log.d("MyApp", imageUrl);
                         saveRecipeData(rid, recipe, imageUrl);
                     } else {
                         Log.d("MyApp", "Error while downloading from memory");

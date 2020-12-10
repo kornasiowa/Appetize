@@ -148,6 +148,8 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
     @Override
     public void setImage(Recipe recipe) {
         if (recipe.getImage() != null) {
+            ivRecipeImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            ivRecipeImage.setClipToOutline(true);
             Glide.with(this).load(recipe.getImage()).into(ivRecipeImage);
         }
     }
@@ -261,7 +263,7 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
         }
     }
 
-    private void deleteImage(){
+    private void deleteImage() {
         isImageDeleted = true;
         ivRecipeImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
         ivRecipeImage.setImageResource(R.drawable.ic_add_image);
@@ -384,12 +386,13 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
         int stepCount = 0,
                 totalTime = 0;
         for (View v : viewListOfSteps) {
+            System.out.println(v);
             stepCount++;
             EditText description = v.findViewById(R.id.description);
             EditText stepTime = v.findViewById(R.id.step_time);
 
             int currentStep = Integer.parseInt(String.valueOf(stepTime.getText()));
-            totalTime = +currentStep;
+            totalTime = totalTime + currentStep;
 
             Step newStep = new Step(stepCount, String.valueOf(description.getText()), currentStep);
             listOfSteps.add(newStep);
