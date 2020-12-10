@@ -14,6 +14,7 @@ import com.kornasdominika.appetize.service.RecipeService;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -56,6 +57,7 @@ public class MainCourses implements IMainCourses{
             public void onResponse(@NotNull Call<List<Recipe>> call, @NotNull Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
                     recipesList = response.body();
+                    Collections.sort(recipesList);
                     mainCoursesFragment.setRecipeList(recipesList);
                     mainCoursesFragment.setListAdapter(recipesList);
                     if(recipesList.isEmpty()){
@@ -72,4 +74,5 @@ public class MainCourses implements IMainCourses{
             }
         });
     }
+
 }

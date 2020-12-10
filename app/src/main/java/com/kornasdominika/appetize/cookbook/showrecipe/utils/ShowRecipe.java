@@ -8,14 +8,17 @@ import androidx.annotation.RequiresApi;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.kornasdominika.appetize.cookbook.showrecipe.ui.IShowRecipeActivity;
+import com.kornasdominika.appetize.model.Recipe;
 import com.kornasdominika.appetize.service.RecipeService;
 import com.kornasdominika.appetize.service.rest.APIUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ShowRecipe implements IShowRecipe{
+public class ShowRecipe implements IShowRecipe {
 
     private IShowRecipeActivity showRecipeActivity;
 
@@ -32,10 +35,10 @@ public class ShowRecipe implements IShowRecipe{
         recipeService = APIUtils.getRecipeService();
     }
 
-    public void deleteRecipe(long rid, String image){
+    public void deleteRecipe(long rid, String image) {
         showRecipeActivity.showProgress();
 
-        if(image != null){
+        if (image != null) {
             deleteWithImage(rid, image);
         } else {
             deleteRecipeData(rid);
@@ -47,7 +50,7 @@ public class ShowRecipe implements IShowRecipe{
         call.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     showRecipeActivity.dismissProgress();
                     showRecipeActivity.showMessage("The recipe has been deleted successfully.");
                     showRecipeActivity.finishCurrentActivity();
@@ -73,9 +76,28 @@ public class ShowRecipe implements IShowRecipe{
 
         storageReference.delete().addOnSuccessListener(aVoid -> deleteRecipeData(rid))
                 .addOnFailureListener(e -> {
-            showRecipeActivity.dismissProgress();
-            showRecipeActivity.showMessage("Server error during deleting recipe photo.");
-            showRecipeActivity.finishCurrentActivity();
+                    showRecipeActivity.dismissProgress();
+                    showRecipeActivity.showMessage("Server error during deleting recipe photo.");
+                    showRecipeActivity.finishCurrentActivity();
+                });
+    }
+
+    @Override
+    public void getRecipe(long rid) {
+        Call<Recipe> call = recipeService.getRecipe(rid);
+        call.enqueue(new Callback<Recipe>() {
+            @Override
+            public void onResponse(@NotNull Call<Recipe> call, @NotNull Response<Recipe> response) {
+                if (response.isSuccessful()) {
+                    Recipe recipe = response.body();
+                    showRecipeActivity.setCookingTime(recipe.getCookingTime());
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<Recipe> call, @NotNull Throwable t) {
+                Log.d("MyApp", "Error during download of recipe details");
+            }
         });
     }
 }

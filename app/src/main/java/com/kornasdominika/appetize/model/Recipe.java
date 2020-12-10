@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Recipe implements Serializable {
+public class Recipe implements Serializable, Comparable<Recipe> {
 
     private static final long serialVersionUID = 1L;
 
@@ -179,4 +179,13 @@ public class Recipe implements Serializable {
                 ", stepList=" + stepList +
                 '}';
     }
+
+    @Override
+    public int compareTo(Recipe recipe) {
+        if (getName() == null || recipe.getName() == null) {
+            return 0;
+        }
+        return getName().compareTo(recipe.getName());
+    }
+
 }

@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.AlarmClock;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,7 @@ public class ShowRecipeActivity extends AppCompatActivity implements IShowRecipe
     private BottomNavigationView navigationView;
 
     private long rid;
+    private int cookingTime;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -47,6 +49,7 @@ public class ShowRecipeActivity extends AppCompatActivity implements IShowRecipe
 
         findComponentsByIds();
         rid = getRidFromParentFragment();
+        showRecipe.getRecipe(rid);
         setOnClick();
     }
 
@@ -88,6 +91,11 @@ public class ShowRecipeActivity extends AppCompatActivity implements IShowRecipe
     }
 
     @Override
+    public void setCookingTime(int cookingTime) {
+        this.cookingTime = cookingTime;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_recipe_menu, menu);
         return true;
@@ -97,13 +105,13 @@ public class ShowRecipeActivity extends AppCompatActivity implements IShowRecipe
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.set_timer:
-                //set timer
+                createTimerDialog(cookingTime);
                 return true;
             case R.id.menu_edit:
                 startEditActivity();
                 return true;
             case R.id.menu_delete:
-                createDeleteDialog();
+                createTimerDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -164,7 +172,7 @@ public class ShowRecipeActivity extends AppCompatActivity implements IShowRecipe
         }
     }
 
-    private void createDeleteDialog() {
+    private void createTimerDialog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Delete recipe");
         dialog.setMessage("This operation is irreversible. Are you sure you want to delete the recipe?");
@@ -176,5 +184,26 @@ public class ShowRecipeActivity extends AppCompatActivity implements IShowRecipe
 
         AlertDialog alertDialog = dialog.create();
         alertDialog.show();
+    }
+
+    private void createTimerDialog(int cookingTime) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Set timer");
+        dialog.setMessage("Do you want to start the cooking time counting down " + cookingTime + " minutes?");
+        dialog.setPositiveButton("Yes", (dialogInterface, i) -> {
+            setTimer(cookingTime);
+        });
+
+        dialog.setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss());
+
+        AlertDialog alertDialog = dialog.create();
+        alertDialog.show();
+    }
+
+    private void setTimer(int cookingTime) {
+        Intent intent = new Intent(AlarmClock.ACTION_SET_TIMER)
+                .putExtra(AlarmClock.EXTRA_LENGTH, cookingTime)
+                .putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+        startActivity(intent);
     }
 }

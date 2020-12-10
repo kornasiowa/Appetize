@@ -14,6 +14,7 @@ import com.kornasdominika.appetize.service.RecipeService;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -56,9 +57,10 @@ public class Appetizers implements IAppetizers {
             public void onResponse(@NotNull Call<List<Recipe>> call, @NotNull Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
                     recipesList = response.body();
+                    Collections.sort(recipesList);
                     appetizersFragment.setListAdapter(recipesList);
                     appetizersFragment.setRecipeList(recipesList);
-                    if(recipesList.isEmpty()){
+                    if (recipesList.isEmpty()) {
                         appetizersFragment.checkIfRecipesExists(false, "No recipes found in this category");
                     } else {
                         appetizersFragment.checkIfRecipesExists(true, null);
@@ -72,4 +74,5 @@ public class Appetizers implements IAppetizers {
             }
         });
     }
+
 }

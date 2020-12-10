@@ -2,6 +2,9 @@ package com.kornasdominika.appetize.cookbook.showrecipe.preparation.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.provider.AlarmClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +44,7 @@ public class StepsListAdapter extends ArrayAdapter<Step> {
 
         findComponentsByIds(view);
         setComponents(position);
+        setOnClick(position);
 
         return view;
     }
@@ -60,7 +64,28 @@ public class StepsListAdapter extends ArrayAdapter<Step> {
 
     private void setOnClick(int position) {
         ivSetTimer.setOnClickListener(view -> {
-
+            createTimerDialog(stepsList.get(position).getDuration());
         });
+    }
+
+    private void createTimerDialog(int cookingTime) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        dialog.setTitle("Set timer");
+        dialog.setMessage("Do you want to start the cooking time counting down " + cookingTime + " minutes?");
+        dialog.setPositiveButton("Yes", (dialogInterface, i) -> {
+            setTimer(cookingTime);
+        });
+
+        dialog.setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss());
+
+        AlertDialog alertDialog = dialog.create();
+        alertDialog.show();
+    }
+
+    private void setTimer(int cookingTime) {
+        Intent intent = new Intent(AlarmClock.ACTION_SET_TIMER)
+                .putExtra(AlarmClock.EXTRA_LENGTH, cookingTime)
+                .putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+        context.startActivity(intent);
     }
 }
