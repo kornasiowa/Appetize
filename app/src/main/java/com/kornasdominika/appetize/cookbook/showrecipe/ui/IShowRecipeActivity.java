@@ -6,7 +6,7 @@ public interface IShowRecipeActivity {
 
     void dismissProgress();
 
-    void finishActivity();
+    void finishCurrentActivity();
 
     void showMessage(String message);
 }

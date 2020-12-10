@@ -57,6 +57,7 @@ public class Appetizers implements IAppetizers {
                 if (response.isSuccessful()) {
                     recipesList = response.body();
                     appetizersFragment.setListAdapter(recipesList);
+                    appetizersFragment.setRecipeList(recipesList);
                     if(recipesList.isEmpty()){
                         appetizersFragment.checkIfRecipesExists(false, "No recipes found in this category");
                     } else {

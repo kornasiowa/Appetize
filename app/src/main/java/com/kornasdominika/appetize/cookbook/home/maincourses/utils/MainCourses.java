@@ -56,6 +56,7 @@ public class MainCourses implements IMainCourses{
             public void onResponse(@NotNull Call<List<Recipe>> call, @NotNull Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
                     recipesList = response.body();
+                    mainCoursesFragment.setRecipeList(recipesList);
                     mainCoursesFragment.setListAdapter(recipesList);
                     if(recipesList.isEmpty()){
                         mainCoursesFragment.checkIfRecipesExists(false, "No recipes found in this category");

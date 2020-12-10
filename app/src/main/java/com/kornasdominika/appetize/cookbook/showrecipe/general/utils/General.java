@@ -44,12 +44,31 @@ public class General implements IGeneral {
                     generalFragment.setComponentsView(recipe);
                     generalFragment.setImagesViews(recipe);
                     generalFragment.setListView(recipe);
+                    generalFragment.setFavorite(recipe.isFavorite());
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<Recipe> call, @NotNull Throwable t) {
                 Log.d("MyApp", "Error during download of recipe details");
+            }
+        });
+    }
+
+    @Override
+    public void updateRecipeAsFavorite(long rid, boolean isFavorite) {
+        Call<Recipe> call = recipeService.updateFavorite(rid, isFavorite);
+        call.enqueue(new Callback<Recipe>() {
+            @Override
+            public void onResponse(Call<Recipe> call, Response<Recipe> response) {
+                if (response.isSuccessful()) {
+                    Log.d("MyApp", "Recipe set as favorite" + isFavorite);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Recipe> call, Throwable t) {
+                Log.d("MyApp", "Error during set recipe as favorite");
             }
         });
     }

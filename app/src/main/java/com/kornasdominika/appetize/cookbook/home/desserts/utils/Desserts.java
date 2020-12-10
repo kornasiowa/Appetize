@@ -56,6 +56,7 @@ public class Desserts implements IDesserts {
             public void onResponse(@NotNull Call<List<Recipe>> call, @NotNull Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
                     recipesList = response.body();
+                    dessertsFragment.setRecipeList(recipesList);
                     dessertsFragment.setListAdapter(recipesList);
                     if(recipesList.isEmpty()){
                         dessertsFragment.checkIfRecipesExists(false, "No recipes found in this category");

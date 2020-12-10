@@ -1,10 +1,13 @@
 package com.kornasdominika.appetize.cookbook.showrecipe.ui;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,7 +25,7 @@ import com.kornasdominika.appetize.cookbook.showrecipe.preparation.ui.Preparatio
 import com.kornasdominika.appetize.cookbook.showrecipe.utils.IShowRecipe;
 import com.kornasdominika.appetize.cookbook.showrecipe.utils.ShowRecipe;
 
-public class ShowRecipeActivity extends AppCompatActivity implements IShowRecipeActivity{
+public class ShowRecipeActivity extends AppCompatActivity implements IShowRecipeActivity {
 
     private IShowRecipe showRecipe;
 
@@ -59,7 +62,7 @@ public class ShowRecipeActivity extends AppCompatActivity implements IShowRecipe
     }
 
     private void setOnClick() {
-        toolbar.setNavigationOnClickListener(view -> finish());
+        toolbar.setNavigationOnClickListener(view -> finishCurrentActivity());
 
         navigationView.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
@@ -100,7 +103,7 @@ public class ShowRecipeActivity extends AppCompatActivity implements IShowRecipe
                 startEditActivity();
                 return true;
             case R.id.menu_delete:
-                showRecipe.deleteRecipe(rid, getImageFromParentFragment());
+                createDeleteDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -118,18 +121,60 @@ public class ShowRecipeActivity extends AppCompatActivity implements IShowRecipe
     }
 
     @Override
-    public void showMessage(String message){
+    public void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void finishActivity() {
+    public void finishCurrentActivity() {
+        Intent returnIntent = new Intent();
+        setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }
 
-    private void startEditActivity(){
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Intent returnIntent = new Intent();
+        setResult(Activity.RESULT_OK, returnIntent);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Intent returnIntent = new Intent();
+        setResult(Activity.RESULT_OK, returnIntent);
+    }
+
+    private void startEditActivity() {
         Intent intent = new Intent(this, EditRecipeActivity.class);
         intent.putExtra("RID", rid);
-        startActivity(intent);
+        startActivityForResult(intent, 8);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 8) {
+            if (resultCode == Activity.RESULT_OK) {
+                finish();
+                startActivity(getIntent());
+            }
+        }
+    }
+
+    private void createDeleteDialog() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Delete recipe");
+        dialog.setMessage("This operation is irreversible. Are you sure you want to delete the recipe?");
+        dialog.setPositiveButton("Yes", (dialogInterface, i) -> {
+            showRecipe.deleteRecipe(rid, getImageFromParentFragment());
+        });
+
+        dialog.setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss());
+
+        AlertDialog alertDialog = dialog.create();
+        alertDialog.show();
     }
 }

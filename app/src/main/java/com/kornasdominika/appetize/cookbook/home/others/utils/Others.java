@@ -56,6 +56,7 @@ public class Others implements IOthers{
             public void onResponse(@NotNull Call<List<Recipe>> call, @NotNull Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
                     recipesList = response.body();
+                    othersFragment.setRecipeList(recipesList);
                     othersFragment.setListAdapter(recipesList);
                     if(recipesList.isEmpty()){
                         othersFragment.checkIfRecipesExists(false, "No recipes found in this category");

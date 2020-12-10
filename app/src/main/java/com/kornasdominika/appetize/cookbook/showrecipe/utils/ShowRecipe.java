@@ -50,11 +50,11 @@ public class ShowRecipe implements IShowRecipe{
                 if(response.isSuccessful()){
                     showRecipeActivity.dismissProgress();
                     showRecipeActivity.showMessage("The recipe has been deleted successfully.");
-                    showRecipeActivity.finishActivity();
+                    showRecipeActivity.finishCurrentActivity();
                 } else {
                     showRecipeActivity.dismissProgress();
                     showRecipeActivity.showMessage("Recipe deletion failed.");
-                    showRecipeActivity.finishActivity();
+                    showRecipeActivity.finishCurrentActivity();
                 }
             }
 
@@ -63,7 +63,7 @@ public class ShowRecipe implements IShowRecipe{
                 Log.d("MyApp", "Error during deleting recipe");
                 showRecipeActivity.dismissProgress();
                 showRecipeActivity.showMessage("Server error during deleting recipe.");
-                showRecipeActivity.finishActivity();
+                showRecipeActivity.finishCurrentActivity();
             }
         });
     }
@@ -75,7 +75,7 @@ public class ShowRecipe implements IShowRecipe{
                 .addOnFailureListener(e -> {
             showRecipeActivity.dismissProgress();
             showRecipeActivity.showMessage("Server error during deleting recipe photo.");
-            showRecipeActivity.finishActivity();
+            showRecipeActivity.finishCurrentActivity();
         });
     }
 }

@@ -45,7 +45,7 @@ public class RecipesListAdapter extends ArrayAdapter<Recipe> {
 
         findComponentsByIds(view);
         setComponents(position);
-        setOnClick(view, position);
+       // setOnClick(view, position);
 
         return view;
     }
@@ -74,12 +74,4 @@ public class RecipesListAdapter extends ArrayAdapter<Recipe> {
         }
     }
 
-    private void setOnClick(View rowView, int position) {
-        rowView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, ShowRecipeActivity.class);
-            intent.putExtra("RID", recipesList.get(position).getRid());
-            intent.putExtra("IMAGE", recipesList.get(position).getImage());
-            context.startActivity(intent);
-        });
-    }
 }

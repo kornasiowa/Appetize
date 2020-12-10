@@ -56,6 +56,7 @@ public class Favorite implements IFavorite{
             public void onResponse(@NotNull Call<List<Recipe>> call, @NotNull Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
                     recipesList = response.body();
+                    favoriteFragment.setRecipeList(recipesList);
                     favoriteFragment.setListAdapter(recipesList);
                     if(recipesList.isEmpty()){
                         favoriteFragment.checkIfRecipesExists(false, "No recipes found in this category");

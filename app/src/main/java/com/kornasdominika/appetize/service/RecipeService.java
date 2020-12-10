@@ -29,6 +29,9 @@ public interface RecipeService {
     @PUT("recipe/{rid}")
     Call<Recipe> updateRecipe(@Path("rid") long rid, @Body Recipe updatedRecipe);
 
+    @PUT("recipe/{rid}/{fav}")
+    Call<Recipe> updateFavorite(@Path("rid") long rid, @Path("fav") boolean fav);
+
     @DELETE("recipe/{rid}")
     Call<Boolean> deleteRecipe(@Path("rid") long rid);
 }

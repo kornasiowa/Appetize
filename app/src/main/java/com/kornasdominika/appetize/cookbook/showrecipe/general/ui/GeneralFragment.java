@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 
 import android.view.View;
@@ -27,14 +28,16 @@ public class GeneralFragment extends Fragment implements IGeneralFragment {
 
     private ImageView ivRecipeImage,
             ivStar,
-    ivShoppingList;
+            ivShoppingList;
     private TextView tvTitle,
             tvCategory,
             tvTime,
             tvCalories,
             tvPortions;
     private ListView lvIngredients;
-    long rid;
+
+    private long rid;
+    private boolean isFavorite;
 
     public GeneralFragment() {
     }
@@ -46,10 +49,11 @@ public class GeneralFragment extends Fragment implements IGeneralFragment {
         View view = inflater.inflate(R.layout.fragment_general, container, false);
         general = new General(this);
 
-         rid = ((ShowRecipeActivity) getActivity()).getRidFromParentFragment();
+        rid = ((ShowRecipeActivity) getActivity()).getRidFromParentFragment();
 
         findComponentsIds(view);
         general.getRecipe(rid);
+        setOnClick();
 
         return view;
     }
@@ -94,10 +98,27 @@ public class GeneralFragment extends Fragment implements IGeneralFragment {
         lvIngredients.setAdapter(adapter);
     }
 
+    @Override
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
     private void setOnClick() {
         ivShoppingList.setOnClickListener(view -> {
 
         });
+
+        ivStar.setOnClickListener(view -> makeRecipeFavorite());
     }
 
+    private void makeRecipeFavorite() {
+        if (isFavorite) {
+            isFavorite = false;
+            ivStar.setImageResource(R.drawable.ic_star_border);
+        } else {
+            isFavorite = true;
+            ivStar.setImageResource(R.drawable.ic_star);
+        }
+        general.updateRecipeAsFavorite(rid, isFavorite);
+    }
 }
