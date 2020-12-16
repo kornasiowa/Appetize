@@ -14,10 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Appetize">
+        <activity android:name=".cookbook.shoppinglistdetails.ui.ShoppingListDetailsActivity"></activity>
         <activity android:name=".cookbook.editrecipe.ui.EditRecipeActivity" />
-        <activity android:name=".cookbook.showrecipe.ui.ShowRecipeActivity" >
+        <activity android:name=".cookbook.showrecipe.ui.ShowRecipeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SET_TIMER" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -34,6 +36,7 @@
             android:theme="@style/Theme.Appetize.Auth">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

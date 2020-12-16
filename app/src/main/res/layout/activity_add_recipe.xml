@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
     tools:context=".cookbook.addrecipe.ui.AddRecipeActivity">
 
     <com.google.android.material.appbar.AppBarLayout

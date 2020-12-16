@@ -11,7 +11,7 @@ import com.kornasdominika.appetize.cookbook.favorite.ui.FavoriteFragment;
 import com.kornasdominika.appetize.R;
 import com.kornasdominika.appetize.cookbook.account.AccountFragment;
 import com.kornasdominika.appetize.cookbook.home.HomeFragment;
-import com.kornasdominika.appetize.cookbook.shoppinglist.ShoppingFragment;
+import com.kornasdominika.appetize.cookbook.shoppinglist.ui.ShoppingFragment;
 
 import androidx.appcompat.app.AppCompatActivity;
 

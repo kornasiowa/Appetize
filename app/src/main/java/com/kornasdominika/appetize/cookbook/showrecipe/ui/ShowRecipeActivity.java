@@ -111,7 +111,7 @@ public class ShowRecipeActivity extends AppCompatActivity implements IShowRecipe
                 startEditActivity();
                 return true;
             case R.id.menu_delete:
-                createTimerDialog();
+                createDeletingDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -141,17 +141,8 @@ public class ShowRecipeActivity extends AppCompatActivity implements IShowRecipe
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Intent returnIntent = new Intent();
-        setResult(Activity.RESULT_OK, returnIntent);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Intent returnIntent = new Intent();
-        setResult(Activity.RESULT_OK, returnIntent);
+    public void onBackPressed() {
+        finishCurrentActivity();
     }
 
     private void startEditActivity() {
@@ -172,7 +163,7 @@ public class ShowRecipeActivity extends AppCompatActivity implements IShowRecipe
         }
     }
 
-    private void createTimerDialog() {
+    private void createDeletingDialog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Delete recipe");
         dialog.setMessage("This operation is irreversible. Are you sure you want to delete the recipe?");

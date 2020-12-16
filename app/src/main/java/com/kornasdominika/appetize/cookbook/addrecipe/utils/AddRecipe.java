@@ -100,7 +100,6 @@ public class AddRecipe implements IAddRecipe {
                 downloadUrl.addOnCompleteListener(task -> {
                     if (downloadUrl.isSuccessful()) {
                         String imageUrl = Objects.requireNonNull(downloadUrl.getResult()).toString();
-                        Log.d("MyApp", imageUrl);
                         saveRecipeData(recipe, imageUrl);
                     } else {
                         Log.d("MyApp", "Error while downloading from memory");

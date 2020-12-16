@@ -1,6 +1,8 @@
 package com.kornasdominika.appetize.service;
 
+import com.kornasdominika.appetize.model.Item;
 import com.kornasdominika.appetize.model.Recipe;
+import com.kornasdominika.appetize.model.ShoppingList;
 
 import java.util.List;
 
@@ -34,4 +36,19 @@ public interface RecipeService {
 
     @DELETE("recipe/{rid}")
     Call<Boolean> deleteRecipe(@Path("rid") long rid);
+
+    @POST("shoppingList")
+    Call<ShoppingList> addList(@Body ShoppingList shoppingList);
+
+    @GET("shoppingList/{uid}")
+    Call<List<ShoppingList>> getUsersShoppingLists(@Path("uid") String uid);
+
+    @GET("shoppingList/details/{lid}")
+    Call<ShoppingList> getShoppingListById(@Path("lid") long lid);
+
+    @DELETE("shoppingList/{lid}")
+    Call<Boolean> deleteShoppingList(@Path("lid") long lid);
+
+    @PUT("shoppingList/items/{lid}")
+    Call<ShoppingList> updateShoppingList(@Path("lid") long lid, @Body List<Item> itemList);
 }
