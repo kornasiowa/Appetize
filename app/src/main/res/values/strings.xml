@@ -65,4 +65,5 @@
     <string name="no_shopping_lists_found">No shopping lists found</string>
     <string name="delete">Delete</string>
     <string name="new_item">New item</string>
+    <string name="shopping_list">Shopping list</string>
 </resources>

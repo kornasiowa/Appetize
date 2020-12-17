@@ -6,6 +6,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.kornasdominika.appetize.service.RecipeService;
+import com.kornasdominika.appetize.service.ShoppingListService;
 
 public class APIUtils {
 
@@ -19,6 +20,10 @@ public class APIUtils {
         return RetrofitClient.getClient(API_URL).create(RecipeService.class);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static ShoppingListService getShoppingListService() {
+        return RetrofitClient.getClient(API_URL).create(ShoppingListService.class);
+    }
 }
 
 

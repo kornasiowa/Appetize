@@ -10,7 +10,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.kornasdominika.appetize.cookbook.shoppinglist.ui.IShoppingFragment;
 import com.kornasdominika.appetize.model.Item;
 import com.kornasdominika.appetize.model.ShoppingList;
-import com.kornasdominika.appetize.service.RecipeService;
+import com.kornasdominika.appetize.service.ShoppingListService;
 import com.kornasdominika.appetize.service.rest.APIUtils;
 
 import java.util.ArrayList;
@@ -24,9 +24,10 @@ public class Shopping implements IShopping {
 
     private IShoppingFragment shoppingFragment;
 
-    private RecipeService recipeService;
+    private ShoppingListService shoppingListService;
 
     public static List<ShoppingList> shoppingLists;
+    public boolean nameExists = false;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public Shopping(IShoppingFragment shoppingFragment) {
@@ -36,7 +37,7 @@ public class Shopping implements IShopping {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void initService() {
-        recipeService = APIUtils.getRecipeService();
+        shoppingListService = APIUtils.getShoppingListService();
     }
 
     private String getUserId() {
@@ -48,8 +49,30 @@ public class Shopping implements IShopping {
     }
 
     @Override
-    public void addNewShoppingList(String name) {
-        Call<ShoppingList> call = recipeService.addList(initializeNewShoppingListValues(name));
+    public void checkIfNameAlreadyExist(String name){
+        Call<Boolean> call = shoppingListService.findShoppingListByName(getUserId(), name);
+        call.enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                if(response.isSuccessful()){
+                    nameExists = response.body();
+                    if(nameExists){
+                        shoppingFragment.showMessage("Name already in use.");
+                    } else {
+                        addNewShoppingList(name);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+                Log.d("MyApp", "Error checking shopping list name");
+            }
+        });
+    }
+
+    private void addNewShoppingList(String name) {
+        Call<ShoppingList> call = shoppingListService.addList(initializeNewShoppingListValues(name));
         call.enqueue(new Callback<ShoppingList>() {
             @Override
             public void onResponse(Call<ShoppingList> call, Response<ShoppingList> response) {
@@ -82,7 +105,7 @@ public class Shopping implements IShopping {
     @Override
     public void getAllUserShoppingLists(){
         shoppingLists = new ArrayList<>();
-        Call<List<ShoppingList>> call = recipeService.getUsersShoppingLists(getUserId());
+        Call<List<ShoppingList>> call = shoppingListService.getUsersShoppingLists(getUserId());
         call.enqueue(new Callback<List<ShoppingList>>() {
             @Override
             public void onResponse(Call<List<ShoppingList>> call, Response<List<ShoppingList>> response) {

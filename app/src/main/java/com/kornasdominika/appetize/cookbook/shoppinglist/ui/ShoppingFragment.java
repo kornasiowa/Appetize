@@ -87,7 +87,7 @@ public class ShoppingFragment extends Fragment implements IShoppingFragment {
     private void createShoppingList() {
         if (editMode) {
             if (checkIfNameNotEmpty()) {
-                shopping.addNewShoppingList(name);
+                shopping.checkIfNameAlreadyExist(name);
             } else {
                 showMessage("Name required.");
             }

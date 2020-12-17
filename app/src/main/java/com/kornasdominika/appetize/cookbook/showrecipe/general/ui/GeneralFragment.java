@@ -1,5 +1,7 @@
 package com.kornasdominika.appetize.cookbook.showrecipe.general.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -10,8 +12,10 @@ import android.view.LayoutInflater;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -20,6 +24,9 @@ import com.kornasdominika.appetize.cookbook.showrecipe.ui.ShowRecipeActivity;
 import com.kornasdominika.appetize.cookbook.showrecipe.general.utils.General;
 import com.kornasdominika.appetize.cookbook.showrecipe.general.utils.IGeneral;
 import com.kornasdominika.appetize.model.Recipe;
+import com.kornasdominika.appetize.model.ShoppingList;
+
+import static com.kornasdominika.appetize.cookbook.showrecipe.general.utils.General.isFavorite;
 
 
 public class GeneralFragment extends Fragment implements IGeneralFragment {
@@ -37,7 +44,6 @@ public class GeneralFragment extends Fragment implements IGeneralFragment {
     private ListView lvIngredients;
 
     private long rid;
-    private boolean isFavorite;
 
     public GeneralFragment() {
     }
@@ -98,14 +104,9 @@ public class GeneralFragment extends Fragment implements IGeneralFragment {
         lvIngredients.setAdapter(adapter);
     }
 
-    @Override
-    public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
-    }
-
     private void setOnClick() {
         ivShoppingList.setOnClickListener(view -> {
-
+            createShoppingListDialog();
         });
 
         ivStar.setOnClickListener(view -> makeRecipeFavorite());
@@ -120,5 +121,35 @@ public class GeneralFragment extends Fragment implements IGeneralFragment {
             ivStar.setImageResource(R.drawable.ic_star);
         }
         general.updateRecipeAsFavorite(rid, isFavorite);
+    }
+
+    private void createShoppingListDialog() {
+        general.getUserShoppingLists();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View view = getLayoutInflater().inflate(R.layout.dialog_shopping_list, null);
+        builder.setTitle("Add items to your shopping list");
+        Spinner spinner = view.findViewById(R.id.shopping_list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, General.shoppingListsNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.setView(view);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

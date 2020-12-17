@@ -8,7 +8,7 @@ import androidx.annotation.RequiresApi;
 import com.kornasdominika.appetize.cookbook.shoppinglistdetails.ui.IShoppingListDetailsActivity;
 import com.kornasdominika.appetize.model.Item;
 import com.kornasdominika.appetize.model.ShoppingList;
-import com.kornasdominika.appetize.service.RecipeService;
+import com.kornasdominika.appetize.service.ShoppingListService;
 import com.kornasdominika.appetize.service.rest.APIUtils;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class ShoppingListDetails implements IShoppingListDetails{
 
     private IShoppingListDetailsActivity shoppingListDetailsActivity;
 
-    private RecipeService recipeService;
+    private ShoppingListService shoppingListService;
 
     public static List<Item> itemList;
 
@@ -34,14 +34,14 @@ public class ShoppingListDetails implements IShoppingListDetails{
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void initService() {
-        recipeService = APIUtils.getRecipeService();
+        shoppingListService = APIUtils.getShoppingListService();
     }
 
     @Override
     public void getShoppingListDetails(long lid){
         itemList = new ArrayList<>();
 
-        Call<ShoppingList> call = recipeService.getShoppingListById(lid);
+        Call<ShoppingList> call = shoppingListService.getShoppingListById(lid);
         call.enqueue(new Callback<ShoppingList>() {
             @Override
             public void onResponse(Call<ShoppingList> call, Response<ShoppingList> response) {
@@ -63,7 +63,7 @@ public class ShoppingListDetails implements IShoppingListDetails{
 
     @Override
     public void deleteShoppingList(long lid){
-        Call<Boolean> call = recipeService.deleteShoppingList(lid);
+        Call<Boolean> call = shoppingListService.deleteShoppingList(lid);
         call.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
@@ -87,7 +87,7 @@ public class ShoppingListDetails implements IShoppingListDetails{
     public void addNewItemToList(long lid, String item){
         itemList.add(new Item(false, item));
 
-        Call<ShoppingList> call = recipeService.updateShoppingList(lid, itemList);
+        Call<ShoppingList> call = shoppingListService.updateShoppingList(lid, itemList);
         call.enqueue(new Callback<ShoppingList>() {
             @Override
             public void onResponse(Call<ShoppingList> call, Response<ShoppingList> response) {
@@ -105,7 +105,7 @@ public class ShoppingListDetails implements IShoppingListDetails{
 
     @Override
     public void updateItemsList(long lid, List<Item> list){
-        Call<ShoppingList> call = recipeService.updateShoppingList(lid, list);
+        Call<ShoppingList> call = shoppingListService.updateShoppingList(lid, list);
         call.enqueue(new Callback<ShoppingList>() {
             @Override
             public void onResponse(Call<ShoppingList> call, Response<ShoppingList> response) {
