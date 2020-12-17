@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary"
-    android:focusableInTouchMode="true"
     android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".cookbook.shoppinglistdetails.ui.ShoppingListDetailsActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -21,7 +21,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/MyDarkToolbarStyle" />
+            android:theme="@style/ActionTheme" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -118,6 +118,7 @@
                     android:paddingStart="5dp"
                     android:paddingEnd="15dp"
                     android:textColor="@color/primary_light"
+                    android:textColorHint="@color/primary_light"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"

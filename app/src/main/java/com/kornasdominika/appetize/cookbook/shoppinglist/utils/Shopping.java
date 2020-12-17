@@ -26,7 +26,7 @@ public class Shopping implements IShopping {
 
     private RecipeService recipeService;
 
-    private List<ShoppingList> shoppingLists;
+    public static List<ShoppingList> shoppingLists;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public Shopping(IShoppingFragment shoppingFragment) {
@@ -47,6 +47,7 @@ public class Shopping implements IShopping {
         return null;
     }
 
+    @Override
     public void addNewShoppingList(String name) {
         Call<ShoppingList> call = recipeService.addList(initializeNewShoppingListValues(name));
         call.enqueue(new Callback<ShoppingList>() {
@@ -78,6 +79,7 @@ public class Shopping implements IShopping {
         return newShoppingList;
     }
 
+    @Override
     public void getAllUserShoppingLists(){
         shoppingLists = new ArrayList<>();
         Call<List<ShoppingList>> call = recipeService.getUsersShoppingLists(getUserId());
@@ -86,12 +88,11 @@ public class Shopping implements IShopping {
             public void onResponse(Call<List<ShoppingList>> call, Response<List<ShoppingList>> response) {
                 if(response.isSuccessful()){
                     shoppingLists = response.body();
-                    shoppingFragment.setShoppingLists(shoppingLists);
                     shoppingFragment.setListAdapter(shoppingLists);
                     if (shoppingLists.isEmpty()) {
-                        shoppingFragment.checkIfRecipesExists(false, "No shopping lists found");
+                        shoppingFragment.checkIfShoppingListsExists(false, "No shopping lists found");
                     } else {
-                        shoppingFragment.checkIfRecipesExists(true, null);
+                        shoppingFragment.checkIfShoppingListsExists(true, null);
                     }
                 }
             }

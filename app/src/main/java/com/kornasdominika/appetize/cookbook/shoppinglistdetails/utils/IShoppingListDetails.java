@@ -1,5 +1,6 @@
 package com.kornasdominika.appetize.cookbook.shoppinglistdetails.utils;
 
+
 import com.kornasdominika.appetize.model.Item;
 
 import java.util.List;

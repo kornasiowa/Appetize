@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.kornasdominika.appetize.R;
+import com.kornasdominika.appetize.model.Item;
 import com.kornasdominika.appetize.model.ShoppingList;
 
 import java.util.List;
@@ -49,7 +50,14 @@ public class ShoppingListAdapter extends ArrayAdapter<ShoppingList> {
 
     private void setComponents(int position) {
         tvName.setText(String.format("%s", shoppingList.get(position).getName()));
-        tvCount.setText(String.format("%s", shoppingList.get(position).getItemsList().size()));
+
+        int count = 0;
+        for (Item i : shoppingList.get(position).getItemsList()) {
+            if (i.isBought()) {
+                count++;
+            }
+        }
+        tvCount.setText(count + " / " + shoppingList.get(position).getItemsList().size());
     }
 
 }

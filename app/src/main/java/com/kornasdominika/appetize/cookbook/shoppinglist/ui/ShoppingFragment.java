@@ -25,7 +25,6 @@ import com.kornasdominika.appetize.cookbook.shoppinglist.utils.Shopping;
 import com.kornasdominika.appetize.cookbook.shoppinglistdetails.ui.ShoppingListDetailsActivity;
 import com.kornasdominika.appetize.model.ShoppingList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ShoppingFragment extends Fragment implements IShoppingFragment {
@@ -41,8 +40,6 @@ public class ShoppingFragment extends Fragment implements IShoppingFragment {
 
     private String name;
     private boolean editMode = false;
-    private List<ShoppingList> shoppingLists;
-
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -50,18 +47,11 @@ public class ShoppingFragment extends Fragment implements IShoppingFragment {
         View root = inflater.inflate(R.layout.fragment_shopping, container, false);
         shopping = new Shopping(this);
 
-        shoppingLists = new ArrayList<>();
-
         findComponentsIds(root);
         setOnClick();
         shopping.getAllUserShoppingLists();
 
         return root;
-    }
-
-    @Override
-    public void setShoppingLists(List<ShoppingList> shoppingLists) {
-        this.shoppingLists = shoppingLists;
     }
 
     private void findComponentsIds(View view) {
@@ -84,7 +74,7 @@ public class ShoppingFragment extends Fragment implements IShoppingFragment {
 
         lvShoppingLists.setOnItemClickListener((adapterView, view, i, l) -> {
             Intent intent = new Intent(getActivity().getApplicationContext(), ShoppingListDetailsActivity.class);
-            intent.putExtra("LID", shoppingLists.get(i).getLid());
+            intent.putExtra("LID", Shopping.shoppingLists.get(i).getLid());
             startActivityForResult(intent, 11);
         });
     }
@@ -136,8 +126,8 @@ public class ShoppingFragment extends Fragment implements IShoppingFragment {
     }
 
     @Override
-    public void checkIfRecipesExists(boolean isRecipesExists, String message) {
-        if (isRecipesExists) {
+    public void checkIfShoppingListsExists(boolean isShoppingListsExists, String message) {
+        if (isShoppingListsExists) {
             tvMessage.setVisibility(View.INVISIBLE);
         } else {
             tvMessage.setText(message);

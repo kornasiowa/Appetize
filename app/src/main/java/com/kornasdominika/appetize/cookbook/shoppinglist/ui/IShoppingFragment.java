@@ -6,13 +6,11 @@ import java.util.List;
 
 public interface IShoppingFragment {
 
-    void setShoppingLists(List<ShoppingList> shoppingLists);
-
     void showMessage(String message);
 
     void setListAdapter(List<ShoppingList> shoppingList);
 
-    void checkIfRecipesExists(boolean isRecipesExists, String message);
+    void checkIfShoppingListsExists(boolean isRecipesExists, String message);
 
     void changeAddingView();
 }

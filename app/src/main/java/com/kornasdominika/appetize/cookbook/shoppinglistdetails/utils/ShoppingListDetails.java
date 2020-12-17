@@ -24,7 +24,7 @@ public class ShoppingListDetails implements IShoppingListDetails{
 
     private RecipeService recipeService;
 
-    private List<Item> itemList;
+    public static List<Item> itemList;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public ShoppingListDetails(IShoppingListDetailsActivity shoppingListDetailsActivity) {
@@ -103,12 +103,14 @@ public class ShoppingListDetails implements IShoppingListDetails{
         });
     }
 
+    @Override
     public void updateItemsList(long lid, List<Item> list){
         Call<ShoppingList> call = recipeService.updateShoppingList(lid, list);
         call.enqueue(new Callback<ShoppingList>() {
             @Override
             public void onResponse(Call<ShoppingList> call, Response<ShoppingList> response) {
                 Log.d("MyApp", "Success during updating shopping list");
+                getShoppingListDetails(lid);
             }
 
             @Override
