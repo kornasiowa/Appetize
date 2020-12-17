@@ -1,7 +1,6 @@
 package com.kornasdominika.appetize.cookbook.showrecipe.general.ui;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -12,6 +11,8 @@ import android.view.LayoutInflater;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -24,7 +25,9 @@ import com.kornasdominika.appetize.cookbook.showrecipe.ui.ShowRecipeActivity;
 import com.kornasdominika.appetize.cookbook.showrecipe.general.utils.General;
 import com.kornasdominika.appetize.cookbook.showrecipe.general.utils.IGeneral;
 import com.kornasdominika.appetize.model.Recipe;
-import com.kornasdominika.appetize.model.ShoppingList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.kornasdominika.appetize.cookbook.showrecipe.general.utils.General.isFavorite;
 
@@ -44,6 +47,8 @@ public class GeneralFragment extends Fragment implements IGeneralFragment {
     private ListView lvIngredients;
 
     private long rid;
+    private String listName;
+    private List<String> itemsList;
 
     public GeneralFragment() {
     }
@@ -59,6 +64,7 @@ public class GeneralFragment extends Fragment implements IGeneralFragment {
 
         findComponentsIds(view);
         general.getRecipe(rid);
+        general.getUserShoppingLists();
         setOnClick();
 
         return view;
@@ -124,32 +130,66 @@ public class GeneralFragment extends Fragment implements IGeneralFragment {
     }
 
     private void createShoppingListDialog() {
-        general.getUserShoppingLists();
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View view = getLayoutInflater().inflate(R.layout.dialog_shopping_list, null);
         builder.setTitle("Add items to your shopping list");
-        Spinner spinner = view.findViewById(R.id.shopping_list);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, General.shoppingListsNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
 
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
+        configureSpinnerForDialog(view);
+        configureListViewForDialog(view);
+        setDialogButtons(builder);
 
         builder.setView(view);
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    private void configureSpinnerForDialog(View view) {
+        Spinner spinner = view.findViewById(R.id.shopping_list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, General.shoppingListsNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (!adapterView.getItemAtPosition(i).toString().equalsIgnoreCase("No shopping lists found")) {
+                    listName = adapterView.getItemAtPosition(i).toString();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+    }
+
+    private void configureListViewForDialog(View view) {
+        itemsList = new ArrayList<>();
+
+        ListView listView = view.findViewById(R.id.lv_recipe_items);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_multiple_choice, General.items);
+        listView.setAdapter(adapter);
+
+        listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+        listView.setOnItemClickListener((adapterView, view1, i, l) -> {
+            String item = (String) adapterView.getItemAtPosition(i);
+            if (!itemsList.contains(item)) {
+                itemsList.add(item);
+            } else {
+                itemsList.remove(item);
+            }
+        });
+    }
+
+    private void setDialogButtons(AlertDialog.Builder builder) {
+        builder.setPositiveButton("Add", (dialogInterface, i) -> {
+            general.updateShoppingList(listName, itemsList);
+            dialogInterface.dismiss();
+        });
+
+        builder.setNegativeButton("Cancel", (dialogInterface, i) -> {
+            dialogInterface.dismiss();
+        });
+    }
+
 }

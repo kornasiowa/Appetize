@@ -7,10 +7,12 @@ import androidx.annotation.RequiresApi;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.kornasdominika.appetize.cookbook.shoppinglist.utils.Shopping;
 import com.kornasdominika.appetize.cookbook.showrecipe.general.ui.IGeneralFragment;
+import com.kornasdominika.appetize.model.Ingredient;
+import com.kornasdominika.appetize.model.Item;
 import com.kornasdominika.appetize.model.Recipe;
 import com.kornasdominika.appetize.model.ShoppingList;
+import com.kornasdominika.appetize.service.ShoppingListService;
 import com.kornasdominika.appetize.service.rest.APIUtils;
 import com.kornasdominika.appetize.service.RecipeService;
 
@@ -28,11 +30,14 @@ public class General implements IGeneral {
     private IGeneralFragment generalFragment;
 
     private RecipeService recipeService;
+    private ShoppingListService shoppingListService;
 
     private List<ShoppingList> shoppingLists;
+    private List<Item> itemsList;
 
-    public static boolean isFavorite;
     public static List<String> shoppingListsNames;
+    public static String[] items;
+    public static boolean isFavorite;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public General(IGeneralFragment generalFragment) {
@@ -43,6 +48,15 @@ public class General implements IGeneral {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void initService() {
         recipeService = APIUtils.getRecipeService();
+        shoppingListService = APIUtils.getShoppingListService();
+    }
+
+    private String getUserId() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            return user.getUid();
+        }
+        return null;
     }
 
     @Override
@@ -57,6 +71,7 @@ public class General implements IGeneral {
                     generalFragment.setImagesViews(recipe);
                     generalFragment.setListView(recipe);
                     isFavorite = recipe.isFavorite();
+                    getItemsFromRecipe(recipe);
                 }
             }
 
@@ -85,22 +100,15 @@ public class General implements IGeneral {
         });
     }
 
-    private String getUserId() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            return user.getUid();
-        }
-        return null;
-    }
-
-    public void getUserShoppingLists(){
+    @Override
+    public void getUserShoppingLists() {
         shoppingLists = new ArrayList<>();
 
-        Call<List<ShoppingList>> call = recipeService.getUsersShoppingLists(getUserId());
+        Call<List<ShoppingList>> call = shoppingListService.getUsersShoppingLists(getUserId());
         call.enqueue(new Callback<List<ShoppingList>>() {
             @Override
             public void onResponse(Call<List<ShoppingList>> call, Response<List<ShoppingList>> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     shoppingLists = response.body();
                     getShoppingListsNames(shoppingLists);
                 }
@@ -113,12 +121,61 @@ public class General implements IGeneral {
         });
     }
 
-    private void getShoppingListsNames(List<ShoppingList> shoppingLists){
+    private void getShoppingListsNames(List<ShoppingList> list) {
         shoppingListsNames = new ArrayList<>();
 
-        for (ShoppingList sl : shoppingLists){
-            shoppingListsNames.add(sl.getName());
-            System.out.println(sl.getName());
+        if (list.isEmpty()) {
+            shoppingListsNames.add("No shopping lists found");
+        } else {
+            for (ShoppingList l : list) {
+                shoppingListsNames.add(l.getName());
+            }
+        }
+    }
+
+    private void getItemsFromRecipe(Recipe recipe) {
+        items = new String[recipe.getIngredientList().size()];
+
+        int index = 0;
+        for (Ingredient ingredient : recipe.getIngredientList()) {
+            items[index] = ingredient.getAmount() + " " + ingredient.getIngredientName();
+            index++;
+        }
+    }
+
+    @Override
+    public void updateShoppingList(String listName, List<String> items){
+        chooseCorrectItemsList(listName);
+        addNewItemsToList(items);
+
+        Call<Boolean> call = shoppingListService.updateShoppingList(listName, itemsList);
+        call.enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                if(response.isSuccessful()){
+                    Log.d("MyApp", "Items add to shopping list successfully");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+                Log.d("MyApp", "Error during adding items to shopping list");
+            }
+        });
+    }
+
+    private void chooseCorrectItemsList(String listName) {
+        for (ShoppingList list : shoppingLists) {
+            if (list.getName().equals(listName)) {
+                itemsList = list.getItemsList();
+            }
+        }
+    }
+
+    private void addNewItemsToList(List<String> items) {
+        for (String name : items) {
+            Item newItem = new Item(false, name);
+            itemsList.add(newItem);
         }
     }
 }

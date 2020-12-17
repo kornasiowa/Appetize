@@ -18,7 +18,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ShoppingListDetails implements IShoppingListDetails{
+public class ShoppingListDetails implements IShoppingListDetails {
 
     private IShoppingListDetailsActivity shoppingListDetailsActivity;
 
@@ -38,14 +38,14 @@ public class ShoppingListDetails implements IShoppingListDetails{
     }
 
     @Override
-    public void getShoppingListDetails(long lid){
+    public void getShoppingListDetails(long lid) {
         itemList = new ArrayList<>();
 
         Call<ShoppingList> call = shoppingListService.getShoppingListById(lid);
         call.enqueue(new Callback<ShoppingList>() {
             @Override
             public void onResponse(Call<ShoppingList> call, Response<ShoppingList> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     ShoppingList shoppingList = response.body();
                     shoppingListDetailsActivity.setComponentsView(shoppingList);
                     itemList = shoppingList.getItemsList();
@@ -62,18 +62,19 @@ public class ShoppingListDetails implements IShoppingListDetails{
     }
 
     @Override
-    public void deleteShoppingList(long lid){
+    public void deleteShoppingList(long lid) {
         Call<Boolean> call = shoppingListService.deleteShoppingList(lid);
         call.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     shoppingListDetailsActivity.showMessage("The shopping list has been deleted successfully.");
                 } else {
                     shoppingListDetailsActivity.showMessage("Shopping list deletion failed.");
                 }
                 shoppingListDetailsActivity.finishCurrentActivity();
             }
+
             @Override
             public void onFailure(Call<Boolean> call, Throwable t) {
                 Log.d("MyApp", "Error during deleting shopping list");
@@ -84,7 +85,7 @@ public class ShoppingListDetails implements IShoppingListDetails{
     }
 
     @Override
-    public void addNewItemToList(long lid, String item){
+    public void addNewItemToList(long lid, String item) {
         itemList.add(new Item(false, item));
 
         Call<ShoppingList> call = shoppingListService.updateShoppingList(lid, itemList);
@@ -104,7 +105,7 @@ public class ShoppingListDetails implements IShoppingListDetails{
     }
 
     @Override
-    public void updateItemsList(long lid, List<Item> list){
+    public void updateItemsList(long lid, List<Item> list) {
         Call<ShoppingList> call = shoppingListService.updateShoppingList(lid, list);
         call.enqueue(new Callback<ShoppingList>() {
             @Override

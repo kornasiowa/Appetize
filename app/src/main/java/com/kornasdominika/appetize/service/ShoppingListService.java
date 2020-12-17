@@ -32,4 +32,7 @@ public interface ShoppingListService {
 
     @PUT("shoppingList/items/{lid}")
     Call<ShoppingList> updateShoppingList(@Path("lid") long lid, @Body List<Item> itemList);
+
+    @PUT("shoppingList/recipeItems/{name}")
+    Call<Boolean> updateShoppingList(@Path("name") String name, @Body List<Item> itemList);
 }
