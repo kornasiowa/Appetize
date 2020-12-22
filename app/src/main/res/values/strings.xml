@@ -66,4 +66,11 @@
     <string name="delete">Delete</string>
     <string name="new_item">New item</string>
     <string name="shopping_list">Shopping list</string>
+    <string name="change_your_account_password">Change your account password</string>
+    <string name="log_out">Log out</string>
+    <string name="change_the_app_theme">Change the app theme</string>
+    <string name="current_password">Current password</string>
+    <string name="save">Save</string>
+    <string name="theme_orange">Theme Sunset Orange</string>
+    <string name="theme_blue">Theme Sky Blue</string>
 </resources>

@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary"
-    android:focusableInTouchMode="true"
     android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".cookbook.addrecipe.ui.AddRecipeActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -43,7 +43,7 @@
         android:layout_margin="25dp"
         android:src="@drawable/ic_cancel"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/app_bar_layout"  />
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline35"
@@ -67,6 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
+                android:backgroundTint="@color/white"
                 app:cardCornerRadius="10dp">
 
                 <LinearLayout
@@ -99,6 +100,7 @@
                             android:inputType="textCapWords"
                             android:paddingStart="5dp"
                             android:paddingEnd="5dp"
+                            android:textColor="@color/primary_light"
                             android:textSize="16sp" />
                     </LinearLayout>
 
@@ -123,7 +125,8 @@
                             android:layout_height="match_parent"
                             android:layout_weight="2"
                             android:background="@drawable/background_off_white"
-                            android:entries="@array/recipe_category" />
+                            android:entries="@array/recipe_category"
+                            android:theme="@style/SpinnerStyle" />
                     </LinearLayout>
 
                     <Switch
@@ -134,6 +137,7 @@
                         android:text="@string/time_mode"
                         android:textColor="@color/primary_light"
                         android:textSize="16sp"
+                        android:theme="@style/SwitchStyle"
                         app:layout_constraintTop_toBottomOf="@id/recipe_time"
                         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
@@ -166,6 +170,8 @@
                             android:inputType="number"
                             android:paddingStart="5dp"
                             android:paddingEnd="5dp"
+                            android:textColor="@color/primary_light"
+                            android:textColorHint="@color/hint"
                             android:textSize="16sp" />
                     </LinearLayout>
 
@@ -197,6 +203,8 @@
                             android:inputType="number"
                             android:paddingStart="5dp"
                             android:paddingEnd="5dp"
+                            android:textColor="@color/primary_light"
+                            android:textColorHint="@color/hint"
                             android:textSize="16sp" />
                     </LinearLayout>
 
@@ -227,6 +235,8 @@
                             android:inputType="number"
                             android:paddingStart="5dp"
                             android:paddingEnd="5dp"
+                            android:textColor="@color/primary_light"
+                            android:textColorHint="@color/primary_light"
                             android:textSize="16sp" />
                     </LinearLayout>
 
@@ -239,6 +249,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
+                android:backgroundTint="@color/white"
                 app:cardCornerRadius="10dp">
 
                 <LinearLayout
@@ -288,6 +299,7 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginRight="15dp"
+                android:backgroundTint="@color/white"
                 app:cardCornerRadius="10dp">
 
                 <LinearLayout
@@ -343,24 +355,19 @@
 
     <Button
         android:id="@+id/add_recipe"
+        style="@style/ButtonAccentStyle"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_margin="15dp"
-        android:background="@drawable/button_accent"
         android:text="@string/save_recipe"
-        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@id/guideline90" />
 
     <ProgressBar
         android:id="@+id/progress"
+        style="@style/ProgressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/button_white"
-        android:elevation="8dp"
-        android:indeterminateTint="@color/accent_light"
-        android:padding="10dp"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

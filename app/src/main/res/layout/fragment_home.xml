@@ -14,9 +14,7 @@
         android:background="@color/primary_dark"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_constraintTop_toTopOf="parent"
-        app:tabIndicatorColor="@color/accent"
-        app:tabMode="fixed"
-        app:tabSelectedTextColor="@color/accent">
+        style="@style/TabLayoutStyle">
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/tab_appetizers"

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <LinearLayout
         android:id="@+id/new_ingredient"
@@ -16,11 +17,13 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/background_off_white"
-            android:hint="@string/amount"
             android:gravity="center"
+            android:hint="@string/amount"
             android:inputType="text"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
+            android:textColor="@color/primary_light"
+            android:textColorHint="@color/hint"
             android:textSize="15sp" />
 
         <EditText
@@ -34,6 +37,8 @@
             android:inputType="text"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
+            android:textColor="@color/primary_light"
+            android:textColorHint="@color/hint"
             android:textSize="15sp" />
 
     </LinearLayout>

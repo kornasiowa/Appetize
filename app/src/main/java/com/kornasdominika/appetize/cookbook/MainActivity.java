@@ -9,7 +9,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.kornasdominika.appetize.authorization.login.ui.LoginActivity;
 import com.kornasdominika.appetize.cookbook.favorite.ui.FavoriteFragment;
 import com.kornasdominika.appetize.R;
-import com.kornasdominika.appetize.cookbook.account.AccountFragment;
+import com.kornasdominika.appetize.cookbook.account.ui.AccountFragment;
 import com.kornasdominika.appetize.cookbook.home.HomeFragment;
 import com.kornasdominika.appetize.cookbook.shoppinglist.ui.ShoppingFragment;
 

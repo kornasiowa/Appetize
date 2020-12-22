@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
+        android:backgroundTint="@color/white"
         app:cardCornerRadius="10dp">
 
         <LinearLayout
@@ -63,12 +64,10 @@
 
                 <ImageView
                     android:id="@+id/set_timer"
+                    style="@style/ImageViewStyle"
                     android:layout_width="34dp"
                     android:layout_height="34dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/button_accent"
-                    android:gravity="center"
-                    android:scaleType="centerInside"
                     android:src="@drawable/ic_timer_white" />
 
             </LinearLayout>

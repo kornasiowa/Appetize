@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/background_off_white" />
+        style="@style/DialogSpinnerStyle" />
 
     <ListView
         android:id="@+id/lv_recipe_items"

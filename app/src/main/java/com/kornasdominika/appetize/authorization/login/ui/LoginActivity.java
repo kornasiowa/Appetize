@@ -1,8 +1,11 @@
 package com.kornasdominika.appetize.authorization.login.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -47,6 +50,10 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (getUsersTheme()) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -61,6 +68,11 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivity {
     protected void onStart() {
         super.onStart();
         login.isUserLogged();
+    }
+
+    private boolean getUsersTheme() {
+        SharedPreferences prefs = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        return prefs.getBoolean("ORANGE_THEME", false);
     }
 
     @Override
@@ -110,7 +122,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivity {
         });
     }
 
-    private void configureGoogleSignIn(){
+    private void configureGoogleSignIn() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -146,7 +158,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivity {
     }
 
     @Override
-    public void makeMessage(String message){
+    public void makeMessage(String message) {
         Toast.makeText(LoginActivity.this, message,
                 Toast.LENGTH_SHORT).show();
     }
@@ -158,12 +170,12 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivity {
     }
 
     @Override
-    public void showProgress(){
+    public void showProgress() {
         progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void hideProgress(){
+    public void hideProgress() {
         progressBar.setVisibility(View.INVISIBLE);
     }
 
