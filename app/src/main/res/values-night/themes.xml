@@ -116,7 +116,7 @@
     </style>
 
     <style name="DialogSpinnerStyle">
-        <item name="android:background">@drawable/background_off_white</item>
+        <item name="android:background">@drawable/background_off_gray</item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat</item>
     </style>
 
