@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.kornasdominika.appetize.R;
@@ -30,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.kornasdominika.appetize.cookbook.showrecipe.general.utils.General.isFavorite;
-
 
 public class GeneralFragment extends Fragment implements IGeneralFragment {
 
@@ -108,6 +108,11 @@ public class GeneralFragment extends Fragment implements IGeneralFragment {
     public void setListView(Recipe recipe) {
         IngredientsListAdapter adapter = new IngredientsListAdapter(getActivity(), recipe.getIngredientList());
         lvIngredients.setAdapter(adapter);
+    }
+
+    @Override
+    public void showMessage(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
     }
 
     private void setOnClick() {

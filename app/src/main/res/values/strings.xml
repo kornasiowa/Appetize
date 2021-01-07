@@ -36,7 +36,6 @@
     <string name="add_step">Add step</string>
     <string name="step">Step</string>
     <string name="description">Description</string>
-    <string name="duration">Duration</string>
     <string name="remove">Remove</string>
     <string name="min">min</string>
     <string name="cal">kcal</string>
@@ -73,4 +72,9 @@
     <string name="save">Save</string>
     <string name="theme_orange">Theme Sunset Orange</string>
     <string name="theme_blue">Theme Sky Blue</string>
+
+    <string name="from_picture">Use photo</string>
+    <string name="ocr">
+        Using the Optical Character Recognition (OCR) allows you to add steps based on a photo of the recipe.
+    </string>
 </resources>

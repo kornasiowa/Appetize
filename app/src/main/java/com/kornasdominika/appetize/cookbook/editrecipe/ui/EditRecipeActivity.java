@@ -6,11 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,7 +37,9 @@ import com.kornasdominika.appetize.cookbook.editrecipe.utils.IEditRecipe;
 import com.kornasdominika.appetize.model.Ingredient;
 import com.kornasdominika.appetize.model.Recipe;
 import com.kornasdominika.appetize.model.Step;
+import com.kornasdominika.appetize.ocr.OCR;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +65,8 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
     private TextView tvNewIngredient,
             tvNewStep,
             tvRemoveIngredient,
-            tvRemoveStep;
+            tvRemoveStep,
+            tvUseOCR;
 
     private List<View> viewListOfIngredients;
     private List<View> viewListOfSteps;
@@ -76,6 +84,9 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
 
     private static final int IMAGE_REQUEST = 1;
     private Uri imageUri;
+
+    private static final int OCR_REQUEST = 23;
+    static final int REQUEST_IMAGE_CAPTURE = 21;
 
     private long rid;
 
@@ -102,6 +113,10 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
 
     }
 
+    private long getRidFromPreviousActivity() {
+        return getIntent().getLongExtra("RID", 0);
+    }
+
     private void findComponentsIds() {
         progress = findViewById(R.id.progress);
         ivRecipeImage = findViewById(R.id.recipe_image);
@@ -121,6 +136,7 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
         llCookingTime = findViewById(R.id.cooking_time_layout);
         toolbar = findViewById(R.id.toolbar);
         ivDeleteImage = findViewById(R.id.delete_image);
+        tvUseOCR = findViewById(R.id.select_picture);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -128,60 +144,37 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    private long getRidFromPreviousActivity() {
-        return getIntent().getLongExtra("RID", 0);
-    }
+    private void setOnClickListeners() {
+        toolbar.setNavigationOnClickListener(view -> finish());
 
-    @Override
-    public void setComponentsView(Recipe recipe) {
-        etRecipeName.setText(recipe.getName());
-        etCookingTime.setText(String.valueOf(recipe.getCookingTime()));
-        etCalories.setText(String.valueOf(recipe.getCalories()));
-        etPortions.setText(String.valueOf(recipe.getPortions()));
-    }
+        ivRecipeImage.setOnClickListener(view ->
+                startActivityForResult(Intent.createChooser(dispatchSelectPictureIntent(), "Select a recipes picture"), IMAGE_REQUEST));
 
-    @Override
-    public void setSpinnerAtPosition(Recipe recipe) {
-        spnCategory.setSelection(((ArrayAdapter<String>) spnCategory.getAdapter()).getPosition(recipe.getCategory()));
-    }
+        ivDeleteImage.setOnClickListener(view -> deleteImage());
 
-    @Override
-    public void setImage(Recipe recipe) {
-        if (recipe.getImage() != null) {
-            ivRecipeImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            ivRecipeImage.setClipToOutline(true);
-            Glide.with(this).load(recipe.getImage()).into(ivRecipeImage);
-        }
-    }
+        tvNewIngredient.setOnClickListener(view -> createNewIngredient());
 
-    @Override
-    public void setIngredients(Recipe recipe) {
-        for (Ingredient i : recipe.getIngredientList()) {
-            LayoutInflater inflater = LayoutInflater.from(EditRecipeActivity.this);
-            View row = inflater.inflate(R.layout.ingredient_layout, null);
-            EditText etAmount = row.findViewById(R.id.amount);
-            EditText etIngredientName = row.findViewById(R.id.ingredient);
-            etAmount.setText(i.getAmount());
-            etIngredientName.setText(i.getIngredientName());
-            viewListOfIngredients.add(row);
-            llIngredients.addView(row);
-        }
-    }
+        tvNewStep.setOnClickListener(view -> createNewStep());
 
-    @Override
-    public void setSteps(Recipe recipe) {
-        for (Step s : recipe.getStepList()) {
-            LayoutInflater inflater = LayoutInflater.from(EditRecipeActivity.this);
-            View row = inflater.inflate(R.layout.step_layout, null);
-            TextView tvCount = row.findViewById(R.id.step_count);
-            EditText etDescription = row.findViewById(R.id.description);
-            EditText etDuration = row.findViewById(R.id.step_time);
-            tvCount.setText(String.valueOf(s.getStep()));
-            etDescription.setText(s.getDescription());
-            etDuration.setText(String.valueOf(s.getDuration()));
-            viewListOfSteps.add(row);
-            llSteps.addView(row);
-        }
+        tvRemoveIngredient.setOnClickListener(view -> deleteLastViewListElement(viewListOfIngredients, llIngredients));
+
+        tvRemoveStep.setOnClickListener(view -> deleteLastViewListElement(viewListOfSteps, llSteps));
+
+        tvUseOCR.setOnClickListener(view -> selectImageResourceForTextExtracting());
+
+        btnAddRecipe.setOnClickListener(view -> {
+            if (validateData()) {
+                Recipe newRecipe = new Recipe();
+                newRecipe.setName(name);
+                newRecipe.setCategory(category);
+                newRecipe.setCookingTime(Integer.parseInt(cookingTime));
+                newRecipe.setCalories(Integer.parseInt(calories));
+                newRecipe.setPortions(Integer.parseInt(portions));
+                newRecipe.setIngredientList(listOfIngredients);
+                newRecipe.setStepList(listOfSteps);
+                editRecipe.editRecipe(rid, newRecipe, imageUri, isImageDeleted);
+            }
+        });
     }
 
     private void setSwitch() {
@@ -209,46 +202,27 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
         });
     }
 
-    private void setOnClickListeners() {
-        toolbar.setNavigationOnClickListener(view -> finish());
-
-        ivRecipeImage.setOnClickListener(view -> startNewIntent());
-
-        ivDeleteImage.setOnClickListener(view -> deleteImage());
-
-        tvNewIngredient.setOnClickListener(view -> createNewIngredient());
-
-        tvNewStep.setOnClickListener(view -> createNewStep());
-
-        tvRemoveIngredient.setOnClickListener(view -> {
-            deleteLastViewListElement(viewListOfIngredients, llIngredients);
-        });
-
-        tvRemoveStep.setOnClickListener(view -> {
-            deleteLastViewListElement(viewListOfSteps, llSteps);
-        });
-
-        btnAddRecipe.setOnClickListener(view -> {
-            if (validateData()) {
-                Recipe newRecipe = new Recipe();
-                newRecipe.setName(name);
-                newRecipe.setCategory(category);
-                newRecipe.setCookingTime(Integer.parseInt(cookingTime));
-                newRecipe.setCalories(Integer.parseInt(calories));
-                newRecipe.setPortions(Integer.parseInt(portions));
-                newRecipe.setIngredientList(listOfIngredients);
-                newRecipe.setStepList(listOfSteps);
-                editRecipe.editRecipe(rid, newRecipe, imageUri, isImageDeleted);
-            }
-        });
+    private void deleteImage() {
+        isImageDeleted = true;
+        ivRecipeImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        ivRecipeImage.setImageResource(R.drawable.ic_add_image);
     }
 
-    private void startNewIntent() {
+    private Intent dispatchSelectPictureIntent() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
 
-        startActivityForResult(Intent.createChooser(intent, "Select a recipes picture"), IMAGE_REQUEST);
+        return intent;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        try {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        } catch (ActivityNotFoundException e) {
+            Log.d("MyApp", "Error taking a picture");
+        }
     }
 
     @Override
@@ -261,15 +235,64 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
             ivRecipeImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
             ivRecipeImage.setImageURI(imageUri);
         }
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap bitmap = (Bitmap) extras.get("data");
+            getPictureFromCamera(bitmap, createStepWithExtractedText());
+        }
+
+        if (requestCode == OCR_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            getPictureFromGallery(uri, createStepWithExtractedText());
+        }
     }
 
-    private void deleteImage() {
-        isImageDeleted = true;
-        ivRecipeImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        ivRecipeImage.setImageResource(R.drawable.ic_add_image);
+    //OCR MODE FUNCTIONS
+    private void selectImageResourceForTextExtracting() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Use photo");
+        dialog.setMessage(getResources().getString(R.string.ocr));
+
+        dialog.setPositiveButton("Select from gallery",
+                (dialogInterface, i) ->
+                        startActivityForResult(Intent.createChooser(dispatchSelectPictureIntent(), "Select a picture"), OCR_REQUEST));
+
+        dialog.setNegativeButton("Take new photo", (dialogInterface, i) -> dispatchTakePictureIntent());
+
+        dialog.setNeutralButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss());
+
+        AlertDialog alertDialog = dialog.create();
+        alertDialog.show();
     }
 
-    //create new ingredient or step functions
+    private EditText createStepWithExtractedText() {
+        LayoutInflater inflater = LayoutInflater.from(EditRecipeActivity.this);
+        View row = inflater.inflate(R.layout.step_layout, null);
+
+        EditText editText = row.findViewById(R.id.description);
+
+        viewListOfSteps.add(row);
+        initValueOfStepNumberAndTime(row, viewListOfSteps);
+        llSteps.addView(row);
+
+        return editText;
+    }
+
+    private void getPictureFromCamera(Bitmap imageBitmap, EditText editText) {
+        editText.setText(OCR.extractTextFromImage(this, imageBitmap));
+    }
+
+    private void getPictureFromGallery(Uri image, EditText editText) {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image);
+            editText.setText(OCR.extractTextFromImage(this, bitmap));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //FUNCTIONS TO CREATE AND DELETE VIEWS
     private void createNewIngredient() {
         LayoutInflater inflater = LayoutInflater.from(EditRecipeActivity.this);
         View row = inflater.inflate(R.layout.ingredient_layout, null);
@@ -292,7 +315,6 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
         stepTime.setText("0");
     }
 
-    //delete ingredient or step functions
     private void deleteLastViewListElement(List<View> list, LinearLayout ll) {
         if (list != null && !list.isEmpty()) {
             View view = list.get(list.size() - 1);
@@ -301,7 +323,7 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
         }
     }
 
-    //data validation functions
+    //DATA VALIDATION FUNCTIONS
     private boolean validateData() {
         name = String.valueOf(etRecipeName.getText());
         calories = String.valueOf(etCalories.getText());
@@ -362,7 +384,7 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
         return isNotEmpty;
     }
 
-    //get all data functions
+    //FUNCTIONS TO GET VALUES FROM THE FORM FIELDS
     private void getRecipeFromForm() {
         getAllIngredientsFromForm(viewListOfIngredients);
         String timeFromSteps = getAllStepsFromFormAndTotalCookingTime(viewListOfSteps);
@@ -400,6 +422,60 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
         return String.valueOf(totalTime);
     }
 
+    //FUNCTIONS TO INITIALIZE CURRENT VALUES
+    @Override
+    public void setComponentsView(Recipe recipe) {
+        etRecipeName.setText(recipe.getName());
+        etCookingTime.setText(String.valueOf(recipe.getCookingTime()));
+        etCalories.setText(String.valueOf(recipe.getCalories()));
+        etPortions.setText(String.valueOf(recipe.getPortions()));
+    }
+
+    @Override
+    public void setSpinnerAtPosition(Recipe recipe) {
+        spnCategory.setSelection(((ArrayAdapter<String>) spnCategory.getAdapter()).getPosition(recipe.getCategory()));
+    }
+
+    @Override
+    public void setImage(Recipe recipe) {
+        if (recipe.getImage() != null) {
+            ivRecipeImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            ivRecipeImage.setClipToOutline(true);
+            Glide.with(this).load(recipe.getImage()).into(ivRecipeImage);
+        }
+    }
+
+    @Override
+    public void setIngredients(Recipe recipe) {
+        for (Ingredient i : recipe.getIngredientList()) {
+            LayoutInflater inflater = LayoutInflater.from(EditRecipeActivity.this);
+            View row = inflater.inflate(R.layout.ingredient_layout, null);
+            EditText etAmount = row.findViewById(R.id.amount);
+            EditText etIngredientName = row.findViewById(R.id.ingredient);
+            etAmount.setText(i.getAmount());
+            etIngredientName.setText(i.getIngredientName());
+            viewListOfIngredients.add(row);
+            llIngredients.addView(row);
+        }
+    }
+
+    @Override
+    public void setSteps(Recipe recipe) {
+        for (Step s : recipe.getStepList()) {
+            LayoutInflater inflater = LayoutInflater.from(EditRecipeActivity.this);
+            View row = inflater.inflate(R.layout.step_layout, null);
+            TextView tvCount = row.findViewById(R.id.step_count);
+            EditText etDescription = row.findViewById(R.id.description);
+            EditText etDuration = row.findViewById(R.id.step_time);
+            tvCount.setText(String.valueOf(s.getStep()));
+            etDescription.setText(s.getDescription());
+            etDuration.setText(String.valueOf(s.getDuration()));
+            viewListOfSteps.add(row);
+            llSteps.addView(row);
+        }
+    }
+
+    //INTERFACE FUNCTIONS
     @Override
     public void showProgress() {
         progress.setVisibility(View.VISIBLE);

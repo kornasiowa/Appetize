@@ -27,7 +27,7 @@ import retrofit2.Response;
 
 public class General implements IGeneral {
 
-    private IGeneralFragment generalFragment;
+    private final IGeneralFragment generalFragment;
 
     private RecipeService recipeService;
     private ShoppingListService shoppingListService;
@@ -146,7 +146,14 @@ public class General implements IGeneral {
     @Override
     public void updateShoppingList(String listName, List<String> items){
         chooseCorrectItemsList(listName);
-        addNewItemsToList(items);
+
+        if(itemsList != null){
+            addNewItemsToList(items);
+        } else {
+            generalFragment.showMessage("You must create at least one shopping list to add items to it.");
+            return;
+        }
+
 
         Call<Boolean> call = shoppingListService.updateShoppingList(listName, itemsList);
         call.enqueue(new Callback<Boolean>() {
@@ -160,6 +167,7 @@ public class General implements IGeneral {
             @Override
             public void onFailure(Call<Boolean> call, Throwable t) {
                 Log.d("MyApp", "Error during adding items to shopping list");
+                generalFragment.showMessage("Error during adding items to shopping list.");
             }
         });
     }

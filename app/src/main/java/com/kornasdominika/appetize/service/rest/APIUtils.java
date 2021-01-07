@@ -1,4 +1,3 @@
-
 package com.kornasdominika.appetize.service.rest;
 
 import android.os.Build;

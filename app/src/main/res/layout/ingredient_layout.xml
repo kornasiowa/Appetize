@@ -33,6 +33,7 @@
             android:layout_marginStart="10dp"
             android:layout_weight="3"
             android:background="@drawable/background_off_white"
+            android:gravity="center"
             android:hint="@string/ingredient"
             android:inputType="text"
             android:paddingStart="5dp"

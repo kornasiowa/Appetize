@@ -9,4 +9,6 @@ public interface IGeneralFragment {
     void setImagesViews(Recipe recipe);
 
     void setListView(Recipe recipe);
+
+    void showMessage(String message);
 }

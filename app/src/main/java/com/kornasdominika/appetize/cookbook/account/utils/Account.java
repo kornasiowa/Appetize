@@ -10,10 +10,9 @@ import com.kornasdominika.appetize.cookbook.account.ui.IAccountFragment;
 
 import static android.content.ContentValues.TAG;
 
-
 public class Account implements IAccount {
 
-    private IAccountFragment accountFragment;
+    private final IAccountFragment accountFragment;
 
     private FirebaseAuth mAuth;
 

@@ -26,7 +26,6 @@ import com.kornasdominika.appetize.authorization.login.ui.LoginActivity;
 import com.kornasdominika.appetize.cookbook.account.utils.Account;
 import com.kornasdominika.appetize.cookbook.account.utils.IAccount;
 
-
 public class AccountFragment extends Fragment implements IAccountFragment {
 
     private IAccount account;

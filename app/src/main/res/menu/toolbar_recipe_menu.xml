@@ -6,7 +6,7 @@
         android:id="@+id/set_timer"
         android:icon="@drawable/ic_timer_white"
         android:title="@string/set_timer"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_edit"

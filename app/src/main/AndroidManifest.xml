@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -14,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Appetize">
-        <activity android:name=".cookbook.shoppinglistdetails.ui.ShoppingListDetailsActivity"></activity>
+        <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="ocr"/>
+        <activity android:name=".cookbook.shoppinglistdetails.ui.ShoppingListDetailsActivity" />
         <activity android:name=".cookbook.editrecipe.ui.EditRecipeActivity" />
         <activity android:name=".cookbook.showrecipe.ui.ShowRecipeActivity">
             <intent-filter>

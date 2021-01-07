@@ -6,11 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,7 +35,9 @@ import com.kornasdominika.appetize.cookbook.addrecipe.utils.IAddRecipe;
 import com.kornasdominika.appetize.model.Ingredient;
 import com.kornasdominika.appetize.model.Recipe;
 import com.kornasdominika.appetize.model.Step;
+import com.kornasdominika.appetize.ocr.OCR;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +63,8 @@ public class AddRecipeActivity extends AppCompatActivity implements IAddRecipeAc
     private TextView tvNewIngredient,
             tvNewStep,
             tvRemoveIngredient,
-            tvRemoveStep;
+            tvRemoveStep,
+            tvUseOCR;
 
     private List<View> viewListOfIngredients;
     private List<View> viewListOfSteps;
@@ -74,6 +82,9 @@ public class AddRecipeActivity extends AppCompatActivity implements IAddRecipeAc
 
     private static final int IMAGE_REQUEST = 1;
     private Uri imageUri;
+
+    private static final int OCR_REQUEST = 23;
+    static final int REQUEST_IMAGE_CAPTURE = 21;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -114,11 +125,47 @@ public class AddRecipeActivity extends AppCompatActivity implements IAddRecipeAc
         llCookingTime = findViewById(R.id.cooking_time_layout);
         toolbar = findViewById(R.id.toolbar);
         ivDeleteImage = findViewById(R.id.delete_image);
+        tvUseOCR = findViewById(R.id.select_picture);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+    }
+
+    private void setOnClickListeners() {
+        toolbar.setNavigationOnClickListener(view -> finish());
+
+        ivRecipeImage.setOnClickListener(view ->
+                startActivityForResult(Intent.createChooser(dispatchSelectPictureIntent(), "Select a recipes picture"), IMAGE_REQUEST));
+
+        ivDeleteImage.setOnClickListener(view -> deleteImage());
+
+        tvNewIngredient.setOnClickListener(view -> createNewIngredient());
+
+        tvNewStep.setOnClickListener(view -> createNewStep());
+
+        tvRemoveIngredient.setOnClickListener(view -> deleteLastViewListElement(viewListOfIngredients, llIngredients));
+
+        tvRemoveStep.setOnClickListener(view -> deleteLastViewListElement(viewListOfSteps, llSteps));
+
+        tvUseOCR.setOnClickListener(view -> selectImageResourceForTextExtracting());
+
+        btnAddRecipe.setOnClickListener(view -> {
+            if (validateData()) {
+                Recipe newRecipe = new Recipe();
+                newRecipe.setUid(uid);
+                newRecipe.setName(name);
+                newRecipe.setCategory(category);
+                newRecipe.setCookingTime(Integer.parseInt(cookingTime));
+                newRecipe.setCalories(Integer.parseInt(calories));
+                newRecipe.setPortions(Integer.parseInt(portions));
+                newRecipe.setFavorite(false);
+                newRecipe.setIngredientList(listOfIngredients);
+                newRecipe.setStepList(listOfSteps);
+                addRecipe.addRecipe(newRecipe, imageUri);
+            }
+        });
     }
 
     private void setSpinner() {
@@ -143,42 +190,7 @@ public class AddRecipeActivity extends AppCompatActivity implements IAddRecipeAc
                 llCookingTime.setVisibility(View.VISIBLE);
                 timeMode = false;
             }
-        });
-    }
 
-    private void setOnClickListeners() {
-        toolbar.setNavigationOnClickListener(view -> finish());
-
-        ivRecipeImage.setOnClickListener(view -> startNewIntent());
-
-        ivDeleteImage.setOnClickListener(view -> deleteImage());
-
-        tvNewIngredient.setOnClickListener(view -> createNewIngredient());
-
-        tvNewStep.setOnClickListener(view -> createNewStep());
-
-        tvRemoveIngredient.setOnClickListener(view -> {
-            deleteLastViewListElement(viewListOfIngredients, llIngredients);
-        });
-
-        tvRemoveStep.setOnClickListener(view -> {
-            deleteLastViewListElement(viewListOfSteps, llSteps);
-        });
-
-        btnAddRecipe.setOnClickListener(view -> {
-            if (validateData()) {
-                Recipe newRecipe = new Recipe();
-                newRecipe.setUid(uid);
-                newRecipe.setName(name);
-                newRecipe.setCategory(category);
-                newRecipe.setCookingTime(Integer.parseInt(cookingTime));
-                newRecipe.setCalories(Integer.parseInt(calories));
-                newRecipe.setPortions(Integer.parseInt(portions));
-                newRecipe.setFavorite(false);
-                newRecipe.setIngredientList(listOfIngredients);
-                newRecipe.setStepList(listOfSteps);
-                addRecipe.addRecipe(newRecipe, imageUri);
-            }
         });
     }
 
@@ -188,12 +200,21 @@ public class AddRecipeActivity extends AppCompatActivity implements IAddRecipeAc
         ivRecipeImage.setImageResource(R.drawable.ic_add_image);
     }
 
-    private void startNewIntent() {
+    private Intent dispatchSelectPictureIntent() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
 
-        startActivityForResult(Intent.createChooser(intent, "Select a recipes picture"), IMAGE_REQUEST);
+        return intent;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        try {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        } catch (ActivityNotFoundException e) {
+            Log.d("MyApp", "Error taking a picture");
+        }
     }
 
     @Override
@@ -205,31 +226,64 @@ public class AddRecipeActivity extends AppCompatActivity implements IAddRecipeAc
             ivRecipeImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
             ivRecipeImage.setImageURI(imageUri);
         }
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap bitmap = (Bitmap) extras.get("data");
+            getPictureFromCamera(bitmap, createStepWithExtractedText());
+        }
+
+        if (requestCode == OCR_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            getPictureFromGallery(uri, createStepWithExtractedText());
+        }
     }
 
-    @Override
-    public void showProgress() {
-        progress.setVisibility(View.VISIBLE);
+    //OCR MODE FUNCTIONS
+    private void selectImageResourceForTextExtracting() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Use photo");
+        dialog.setMessage(getResources().getString(R.string.ocr));
+
+        dialog.setPositiveButton("Select from gallery",
+                (dialogInterface, i) ->
+                        startActivityForResult(Intent.createChooser(dispatchSelectPictureIntent(), "Select a picture"), OCR_REQUEST));
+
+        dialog.setNegativeButton("Take new photo", (dialogInterface, i) -> dispatchTakePictureIntent());
+
+        dialog.setNeutralButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss());
+
+        AlertDialog alertDialog = dialog.create();
+        alertDialog.show();
     }
 
-    @Override
-    public void dismissProgress() {
-        progress.setVisibility(View.GONE);
+    private EditText createStepWithExtractedText() {
+        LayoutInflater inflater = LayoutInflater.from(AddRecipeActivity.this);
+        View row = inflater.inflate(R.layout.step_layout, null);
+
+        EditText editText = row.findViewById(R.id.description);
+
+        viewListOfSteps.add(row);
+        initValueOfStepNumberAndTime(row, viewListOfSteps);
+        llSteps.addView(row);
+
+        return editText;
     }
 
-    @Override
-    public void finishActivity() {
-        Intent returnIntent = new Intent();
-        setResult(Activity.RESULT_OK, returnIntent);
-        finish();
+    private void getPictureFromCamera(Bitmap imageBitmap, EditText editText) {
+        editText.setText(OCR.extractTextFromImage(this, imageBitmap));
     }
 
-    @Override
-    public void showMessage(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    private void getPictureFromGallery(Uri image, EditText editText) {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image);
+            editText.setText(OCR.extractTextFromImage(this, bitmap));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    //create new ingredient or step functions
+    //FUNCTIONS TO CREATE AND DELETE VIEWS
     private void createNewIngredient() {
         LayoutInflater inflater = LayoutInflater.from(AddRecipeActivity.this);
         View row = inflater.inflate(R.layout.ingredient_layout, null);
@@ -252,7 +306,6 @@ public class AddRecipeActivity extends AppCompatActivity implements IAddRecipeAc
         stepTime.setText("0");
     }
 
-    //delete ingredient or step functions
     private void deleteLastViewListElement(List<View> list, LinearLayout ll) {
         if (list != null && !list.isEmpty()) {
             View view = list.get(list.size() - 1);
@@ -261,7 +314,7 @@ public class AddRecipeActivity extends AppCompatActivity implements IAddRecipeAc
         }
     }
 
-    //data validation functions
+    //DATA VALIDATION FUNCTIONS
     private boolean validateData() {
         name = String.valueOf(etRecipeName.getText());
         calories = String.valueOf(etCalories.getText());
@@ -284,7 +337,7 @@ public class AddRecipeActivity extends AppCompatActivity implements IAddRecipeAc
         } else if (!checkIfIngredientsListContainEmptyFields(viewListOfIngredients)) {
             Toast.makeText(getApplicationContext(), "The list of ingredients contains empty fields.", Toast.LENGTH_SHORT).show();
             return false;
-        } else if (!checkIfStepsListContainEmptyFields(viewListOfSteps)) {
+        } else if (!checkIfInstructionContainEmptyFields(viewListOfSteps)) {
             Toast.makeText(getApplicationContext(), "The list of steps contains empty fields.", Toast.LENGTH_SHORT).show();
             return false;
         } else {
@@ -309,7 +362,7 @@ public class AddRecipeActivity extends AppCompatActivity implements IAddRecipeAc
         return isNotEmpty;
     }
 
-    private boolean checkIfStepsListContainEmptyFields(List<View> stepsList) {
+    private boolean checkIfInstructionContainEmptyFields(List<View> stepsList) {
         boolean isNotEmpty = true;
         if (!stepsList.isEmpty()) {
             for (View v : stepsList) {
@@ -322,14 +375,14 @@ public class AddRecipeActivity extends AppCompatActivity implements IAddRecipeAc
         return isNotEmpty;
     }
 
-    //get all data functions
+    //FUNCTIONS TO GET VALUES FROM THE FORM FIELDS
     private void getRecipeFromForm() {
         getAllIngredientsFromForm(viewListOfIngredients);
-        String timeFromSteps = getAllStepsFromFormAndTotalCookingTime(viewListOfSteps);
 
-        if (timeMode) {
-            cookingTime = timeFromSteps;
-        }
+        if (timeMode)
+            cookingTime = getAllStepsFromFormAndTotalCookingTime(viewListOfSteps);
+         else
+            getAllStepsFromFormAndTotalCookingTime(viewListOfSteps);
     }
 
     private void getAllIngredientsFromForm(List<View> viewListOfIngredients) {
@@ -357,6 +410,29 @@ public class AddRecipeActivity extends AppCompatActivity implements IAddRecipeAc
             listOfSteps.add(newStep);
         }
         return String.valueOf(totalTime);
+    }
+
+    //INTERFACE FUNCTIONS
+    @Override
+    public void showProgress() {
+        progress.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void dismissProgress() {
+        progress.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void finishActivity() {
+        Intent returnIntent = new Intent();
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
+    }
+
+    @Override
+    public void showMessage(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
 }

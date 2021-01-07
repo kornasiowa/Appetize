@@ -56,7 +56,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/guideline90"
-        app:layout_constraintTop_toTopOf="@id/guideline35">
+        app:layout_constraintTop_toTopOf="@id/guideline35"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="-25dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -279,10 +281,10 @@
 
                         <TextView
                             android:id="@+id/delete_ingredient"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_weight="1"
+                            android:layout_marginEnd="5dp"
                             android:text="@string/remove"
                             android:textColor="@color/primary_light"
                             android:textSize="16sp"
@@ -310,6 +312,7 @@
                     android:padding="15dp">
 
                     <LinearLayout
+                        android:id="@+id/step_mode"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:layout_marginTop="5dp"
@@ -328,18 +331,30 @@
                             app:drawableStartCompat="@drawable/ic_add" />
 
                         <TextView
-                            android:id="@+id/delete_step"
+                            android:id="@+id/select_picture"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_weight="1"
+                            android:layout_weight="2"
+                            android:drawablePadding="5dp"
+                            android:text="@string/from_picture"
+                            android:textColor="@color/primary_light"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:drawableStartCompat="@drawable/ic_ocr" />
+
+                        <TextView
+                            android:id="@+id/delete_step"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginEnd="5dp"
                             android:text="@string/remove"
                             android:textColor="@color/primary_light"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             app:drawableStartCompat="@drawable/ic_close" />
                     </LinearLayout>
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
