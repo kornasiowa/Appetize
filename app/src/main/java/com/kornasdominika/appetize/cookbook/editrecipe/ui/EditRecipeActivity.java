@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,6 +14,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -39,8 +41,11 @@ import com.kornasdominika.appetize.model.Recipe;
 import com.kornasdominika.appetize.model.Step;
 import com.kornasdominika.appetize.ocr.OCR;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class EditRecipeActivity extends AppCompatActivity implements IEditRecipeActivity {
@@ -86,7 +91,8 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
     private Uri imageUri;
 
     private static final int OCR_REQUEST = 23;
-    static final int REQUEST_IMAGE_CAPTURE = 21;
+    private static final int REQUEST_IMAGE_CAPTURE = 21;
+    private File photoFile;
 
     private long rid;
 
@@ -208,21 +214,51 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
         ivRecipeImage.setImageResource(R.drawable.ic_add_image);
     }
 
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        String currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                Log.d("MyApp", "Error while creating the Photo File");
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.kornasdominika.appetize.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
     private Intent dispatchSelectPictureIntent() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
 
         return intent;
-    }
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        try {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        } catch (ActivityNotFoundException e) {
-            Log.d("MyApp", "Error taking a picture");
-        }
     }
 
     @Override
@@ -237,9 +273,8 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
         }
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap bitmap = (Bitmap) extras.get("data");
-            getPictureFromCamera(bitmap, createStepWithExtractedText());
+            Uri uri = FileProvider.getUriForFile(this, "com.kornasdominika.appetize.fileprovider", photoFile);
+            getPictureFromGallery(uri, createStepWithExtractedText());
         }
 
         if (requestCode == OCR_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
@@ -277,10 +312,6 @@ public class EditRecipeActivity extends AppCompatActivity implements IEditRecipe
         llSteps.addView(row);
 
         return editText;
-    }
-
-    private void getPictureFromCamera(Bitmap imageBitmap, EditText editText) {
-        editText.setText(OCR.extractTextFromImage(this, imageBitmap));
     }
 
     private void getPictureFromGallery(Uri image, EditText editText) {

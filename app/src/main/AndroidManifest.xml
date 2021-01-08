@@ -4,8 +4,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -15,6 +16,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Appetize">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.kornasdominika.appetize.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="ocr"/>
         <activity android:name=".cookbook.shoppinglistdetails.ui.ShoppingListDetailsActivity" />
         <activity android:name=".cookbook.editrecipe.ui.EditRecipeActivity" />
