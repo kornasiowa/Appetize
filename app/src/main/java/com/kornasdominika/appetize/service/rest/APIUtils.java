@@ -13,7 +13,6 @@ public class APIUtils {
     }
 
     private static final String API_URL = "http://10.0.2.2:8080/appetize/";
-    //private static final String API_URL = "http://192.168.0.107:8080/appetize/";
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static RecipeService getRecipeService() {
