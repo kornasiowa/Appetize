@@ -1,6 +1,6 @@
 # Appetize
 The mobile application for Android allowing for storage recipes and creating shopping lists. </br>
-It works with my [Appetize Spring Boot Server](github.com/kornasiowa/AppetizeServer).
+It works with [Appetize Spring Boot Server](github.com/kornasiowa/AppetizeServer).
 
 ## About
 The application is addressed to individual users who want to digitize their recipes in the form of traditional paper notes. 
@@ -48,6 +48,43 @@ A list of all your favorite recipes is available in the Favorites tab.
 <p float="left">
 <img src="https://github.com/kornasiowa/Appetize/blob/master/screenshots/Screenshot_20210217-125009_Appetize.jpg" width="250">
 <img src="https://github.com/kornasiowa/Appetize/blob/master/screenshots/Screenshot_20210217-131156_Appetize.jpg" width="250">
+</p>
+
+The add / edit recipe form contains basic information about the recipe such as title, category, calories, portions and cooking time. 
+The user can enter the overall cooking time or choose to automatically count the cooking time based on the duration of all cooking steps.
+
+The user can add any number of ingredients and preparation steps.
+
+Optical Character Recognition (OCR) allows the user to add recipe preparation steps.
+
+<p float="left">
+<img src="https://github.com/kornasiowa/Appetize/blob/master/screenshots/Screenshot_20210217-125107_Appetize.jpg" width="250">
+<img src="https://github.com/kornasiowa/Appetize/blob/master/screenshots/Screenshot_20210217-131120_Appetize.jpg" width="250">
+<img src="https://github.com/kornasiowa/Appetize/blob/master/screenshots/show_ocr.gif" width="250">
+</p>
+
+The user can add items to the created shopping lists from the ingredients included in the recipes or add them manually.
+
+<p float="left">
+<img src="https://github.com/kornasiowa/Appetize/blob/master/screenshots/Screenshot_20210217-131326_Appetize.jpg" width="250">
+<img src="https://github.com/kornasiowa/Appetize/blob/master/screenshots/Screenshot_20210217-131707_Appetize.jpg" width="250">
+<img src="https://github.com/kornasiowa/Appetize/blob/master/screenshots/Screenshot_20210217-131602_Appetize.jpg" width="250">
+</p>
+
+The user can add more items to the shopping list at any time, mark already purchased items or delete the entire list.
+
+The number of items on each list is counted (including items already purchased).
+
+<p float="left">
+<img src="https://github.com/kornasiowa/Appetize/blob/master/screenshots/Screenshot_20210217-131815_Appetize.jpg" width="250">
+<img src="https://github.com/kornasiowa/Appetize/blob/master/screenshots/Screenshot_20210217-131822_Appetize.jpg" width="250">
+</p>
+
+From the Account tab, the user can change the account password, application theme or log out.
+
+<p float="left">
+<img src="https://github.com/kornasiowa/Appetize/blob/master/screenshots/Screenshot_20210217-132245_Appetize.jpg" width="250">
+<img src="https://github.com/kornasiowa/Appetize/blob/master/screenshots/Screenshot_20210217-132238_Appetize.jpg" width="250">
 </p>
 
 ## App themes
