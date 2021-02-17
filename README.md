@@ -13,7 +13,7 @@ The application supports full CRUD operations for recipes and shopping lists.
 
 The full functionality of the application is available to logged in users via an account set up in the application or authorization with a Google account.
 
-## Overwiew
+## Overview
 The login screen allows the user to authorize with an application account or a Google platform account. 
 Additionally, the user can also go to the registration form or send a request to reset a forgotten password.
 
@@ -43,7 +43,7 @@ Selecting a recipe displays details of calories, cooking time, portion sizes, in
 From this screen, the user can mark the recipe as favorite by clicking the star in the corner of the photo 
 or set a timer that measures the cooking time of the entire dish (the timer can also be set for each step separately if it has a defined duration). 
 
-A list of all your favorite recipes is available in the Favorites tab.
+A list of all user's favorite recipes is available in the Favorites tab.
 
 <p float="left">
 <img src="https://github.com/kornasiowa/Appetize/blob/master/screenshots/Screenshot_20210217-125009_Appetize.jpg" width="250">
