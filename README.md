@@ -1,6 +1,6 @@
 # Appetize
 The mobile application for Android allowing for storage recipes and creating shopping lists. </br>
-It works with [Appetize Spring Boot Server](github.com/kornasiowa/AppetizeServer).
+It works with [Appetize Spring Boot Server](https://github.com/kornasiowa/AppetizeServer).
 
 ## About
 The application is addressed to individual users who want to digitize their recipes in the form of traditional paper notes. 
