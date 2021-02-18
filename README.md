@@ -5,7 +5,7 @@ It works with [Appetize Spring Boot Server](https://github.com/kornasiowa/Appeti
 ## About
 The application is addressed to individual users who want to digitize their recipes in the form of traditional paper notes. 
 The main functionality is storage and manage recipes with photos, any number of ingredients and preparation steps. 
-Adding (or editing) recipes is possible via manual form completion or using optical character recognition (OCR). 
+Adding (or editing) recipes is possible via manual form completion or using Optical Character Recognition (OCR). 
 The application allows you to set an alarm that informs you of the expiry of the cooking time. 
 Additionally, the user can create shopping lists and add items to them directly or on the basis of a list of recipe ingredients.
 
