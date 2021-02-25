@@ -13,6 +13,8 @@ The application supports full CRUD operations for recipes and shopping lists.
 
 The full functionality of the application is available to logged in users via an account set up in the application or authorization with a Google account.
 
+The application has been implemented in the MVP architecture.
+
 ## Overview
 The login screen allows the user to authorize with an application account or a Google platform account. 
 Additionally, the user can also go to the registration form or send a request to reset a forgotten password.
